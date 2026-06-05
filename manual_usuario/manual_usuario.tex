@@ -1,0 +1,406 @@
+\documentclass[10pt,letterpaper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{helvet}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{setspace}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\geometry{
+  top=20mm,
+  bottom=20mm,
+  left=25mm,
+  right=25mm
+}
+
+\setstretch{1.05}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\captionsetup{font=small,labelfont=bf}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  pdftitle={Manual de Usuario - Gestor de Identidades MA2006B 2026},
+  pdfauthor={Equipo 5}
+}
+
+\newcommand{\screenshot}[3]{
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+    \caption{#2}
+    \label{#3}
+  \end{figure}
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{0.5cm}
+
+  {\Large\bfseries Instituto Tecnológico y de Estudios Superiores de Monterrey\par}
+  \vspace{0.4cm}
+  \includegraphics[width=0.52\textwidth]{logos/tecnologico-de-monterrey-blue.png}
+  \vspace{0.6cm}
+
+  {\large\bfseries Escuela de Ingeniería y Ciencias\par}
+  \vspace{0.2cm}
+  {\large Ingeniería en Ciencia de Datos y Matemáticas\par}
+
+  \vspace{1.0cm}
+  {\Large\bfseries Manual de Usuario\par}
+  \vspace{0.2cm}
+  {\large Gestor de Identidades MA2006B 2026\par}
+  {\large Versión v1.0\par}
+
+  \vspace{1.0cm}
+  {\bfseries Socio Formador:} Casa Monarca\par
+  \vspace{0.5cm}
+  {\bfseries Profesores:} Raúl Gómez, Anas Wajid y Alberto F. Martínez\par
+
+  \vspace{0.8cm}
+  {\bfseries Equipo de trabajo:} Equipo 5\par
+  {\bfseries Grupo:} 603\par
+
+  \vspace{0.8cm}
+  {\bfseries Integrantes}\par
+  Alberto Rodríguez Reyes (A01383805)\par
+  Diego Alberto Rodríguez Ruiz (A01571638)\par
+  Rubén Jiménez Sarmiento (A01286256)\par
+  Hector Alonso Flores Melendez (A01571545)\par
+  Valeria García Hernández (A01742811)\par
+
+  \vfill
+  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 4 de junio de 2026\par
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+%\listoftables
+%\listoffigures
+\clearpage
+\pagenumbering{arabic}
+
+\chapter{Introducción}
+
+El Gestor de Identidades de Casa Monarca es una aplicación web orientada al registro, consulta y seguimiento de información operativa relacionada con usuarios, migrantes, solicitudes y documentos. Este manual se enfoca en el módulo \textbf{Gestor de documentos}, donde se administra el flujo de revisión y firma digital de documentos.
+
+La aplicación sirve para centralizar documentos, identificar su etapa actual, controlar qué rol puede realizar cada acción y registrar la firma digital del coordinador cuando corresponde. El flujo principal del módulo se resume como \textbf{Ventanilla} $\rightarrow$ \textbf{Operador / Verificación} $\rightarrow$ \textbf{Coordinador / Firma} $\rightarrow$ \textbf{Inserción final}.
+
+El manual está dirigido a usuarios administrativos, coordinadores, operadores y usuarios de consulta que participan en el proceso documental de Casa Monarca. También puede ser usado por personal técnico para validar el comportamiento esperado durante instalación, pruebas o capacitación.
+
+\chapter{Requerimientos del Sistema}
+
+\section{Hardware mínimo}
+
+\begin{table}[H]
+\centering
+\caption{Hardware mínimo recomendado}
+\label{tab:hardware}
+\begin{tabular}{p{0.32\textwidth} p{0.55\textwidth}}
+\toprule
+\textbf{Componente} & \textbf{Recomendación} \\
+\midrule
+Procesador & Doble núcleo o superior. \\
+Memoria RAM & 4 GB mínimo; 8 GB recomendado para pruebas locales. \\
+Almacenamiento & 1 GB disponible para aplicación, dependencias y documentos de prueba. \\
+Red & Acceso local al servidor web y a la base de datos. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Software necesario}
+
+\begin{table}[H]
+\centering
+\caption{Software requerido}
+\label{tab:software}
+\begin{tabular}{p{0.30\textwidth} p{0.57\textwidth}}
+\toprule
+\textbf{Elemento} & \textbf{Uso dentro del sistema} \\
+\midrule
+Navegador web moderno & Acceso a la interfaz de usuario. Se recomienda Chrome, Chromium, Edge o Firefox. \\
+Servidor web con PHP & Ejecución de los endpoints ubicados en la carpeta \texttt{api}. \\
+Base de datos MySQL o MariaDB & Almacenamiento de usuarios, documentos, historial y firmas. \\
+Node.js y npm & Ejecución del frontend React durante desarrollo o pruebas. \\
+Vite & Servidor de desarrollo usado por el frontend React. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Versiones compatibles}
+
+El frontend está construido con React, React Router y Bootstrap. Para pruebas locales se recomienda usar una versión vigente de Node.js compatible con el proyecto, un servidor PHP habilitado y una base MySQL/MariaDB configurada con la base de datos \texttt{casa\_monarca}.
+
+\chapter{Instalación}
+
+\section{Preparación del entorno}
+
+Antes de iniciar, confirmar que el equipo tenga instalado el servidor web, PHP, MySQL o MariaDB, Node.js y npm. La carpeta del proyecto debe estar disponible en el servidor local para que los endpoints PHP puedan responder desde \texttt{/api}.
+
+\section{Pasos de instalación}
+
+\begin{enumerate}[label=\arabic*.]
+  \item Copiar el proyecto en el directorio de trabajo del servidor local.
+  \item Configurar la conexión a la base de datos en el archivo de conexión PHP.
+  \item Verificar que la base de datos \texttt{casa\_monarca} exista y contenga las tablas requeridas.
+  \item Entrar a la carpeta del frontend.
+  \item Instalar dependencias con \texttt{npm install}, si aún no existen.
+  \item Iniciar el frontend con \texttt{npm run dev}.
+  \item Abrir en el navegador la dirección indicada por Vite.
+  \item Verificar que las llamadas a \texttt{/api} respondan correctamente.
+\end{enumerate}
+
+\section{Consideraciones importantes}
+
+Los documentos cargados por el sistema deben conservarse en la carpeta de archivos configurada para el backend. Si se mueve el proyecto de ubicación, también debe revisarse la ruta usada para visualizar los documentos. Los usuarios de tipo operador o consulta deben tener un coordinador asignado para participar correctamente en el flujo documental.
+
+\chapter{Inicio de la Aplicación}
+
+\section{Acceso}
+
+Para acceder a la aplicación, abrir el navegador y entrar a la URL local o institucional configurada para el sistema. En un entorno de desarrollo, la dirección usual es \texttt{http://localhost} o la URL indicada por el servidor de desarrollo.
+
+\screenshot{capturas/01-login.png}{Pantalla inicial de inicio de sesión.}{fig:login}
+
+\section{Inicio de sesión}
+
+En la pantalla de inicio de sesión se capturan el correo electrónico y la contraseña del usuario. Al presionar \textbf{Ingresar}, el sistema valida las credenciales y redirige al dashboard si la sesión es correcta.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Escribir el correo electrónico registrado.
+  \item Escribir la contraseña.
+  \item Presionar el botón \textbf{Ingresar}.
+  \item Confirmar que el dashboard muestre el nombre, rol y correo del usuario.
+\end{enumerate}
+
+\screenshot{capturas/02-dashboard-admin.png}{Dashboard de Casa Monarca con sesión de administrador.}{fig:dashboard}
+
+\chapter{Guía de Uso}
+
+\section{Roles del sistema}
+
+\begin{table}[H]
+\centering
+\caption{Roles y permisos principales en el gestor de documentos}
+\label{tab:roles}
+\begin{tabular}{p{0.22\textwidth} p{0.65\textwidth}}
+\toprule
+\textbf{Rol} & \textbf{Acciones principales} \\
+\midrule
+Admin & Consulta documentos, aprueba desde Ventanilla y realiza la inserción final. \\
+Coordinador & Consulta documentos de su coordinación y firma documentos en etapa Operador. \\
+Operador & Consulta documentos de su coordinación y aprueba documentos desde Ventanilla. \\
+Consulta & Sube documentos y consulta documentos asociados a su coordinador. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Acceder al gestor de documentos}
+
+\textbf{Objetivo:} abrir el módulo donde se consultan, cargan, firman y avanzan documentos.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Iniciar sesión con un usuario autorizado.
+  \item En el dashboard, seleccionar \textbf{Gestor de documentos}.
+  \item Confirmar que la pantalla muestre el título \textbf{Gestor de documentos}.
+\end{enumerate}
+
+\textbf{Resultado esperado:} el sistema muestra estadísticas por etapa, el formulario de nuevo documento y la tabla de documentos registrados.
+
+\screenshot{capturas/03-gestor-documentos-inicial.png}{Vista inicial del gestor de documentos.}{fig:gestor-inicial}
+
+\section{Subir un documento}
+
+\textbf{Objetivo:} registrar un documento nuevo e iniciar el flujo en etapa Ventanilla.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Ingresar al módulo \textbf{Gestor de documentos}.
+  \item En la sección \textbf{Nuevo documento}, escribir un título.
+  \item Capturar una descripción breve.
+  \item Seleccionar el archivo correspondiente.
+  \item Presionar \textbf{Subir documento}.
+\end{enumerate}
+
+\textbf{Ejemplo:} el usuario de consulta María García registra el documento \textit{Expediente de validación}.
+
+\textbf{Resultado esperado:} el sistema muestra el mensaje \textit{Documento creado correctamente} y agrega el documento a la tabla en etapa \textbf{V - Ventanilla}.
+
+\screenshot{capturas/04-formulario-nuevo-documento.png}{Formulario para crear un documento.}{fig:nuevo-documento}
+\screenshot{capturas/05-documento-etapa-ventanilla.png}{Documento creado en etapa Ventanilla.}{fig:documento-ventanilla}
+
+\section{Consultar documentos registrados}
+
+\textbf{Objetivo:} revisar el estado, archivo, coordinador asignado y acciones disponibles de cada documento.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Abrir el gestor de documentos.
+  \item Revisar la tabla \textbf{Documentos registrados}.
+  \item Identificar el título, etapa, coordinador, archivo, ticket de firma y acciones.
+\end{enumerate}
+
+\textbf{Resultado esperado:} cada documento muestra su etapa actual y solo las acciones permitidas para el rol en sesión.
+
+\section{Interpretar las etapas del flujo}
+
+\begin{table}[H]
+\centering
+\caption{Etapas del flujo documental VOCA}
+\label{tab:etapas}
+\begin{tabular}{p{0.16\textwidth} p{0.28\textwidth} p{0.43\textwidth}}
+\toprule
+\textbf{Clave} & \textbf{Nombre} & \textbf{Significado} \\
+\midrule
+V & Ventanilla & Documento recibido o creado inicialmente. \\
+O & Operador / Verificación & Documento aprobado para revisión operativa. \\
+C & Coordinador / Firma & Documento firmado digitalmente por el coordinador. \\
+A & Inserción final & Documento finalizado por el administrador. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Aprobar documento como operador}
+
+\textbf{Objetivo:} avanzar un documento desde Ventanilla hacia Operador / Verificación.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Iniciar sesión con rol operador.
+  \item Abrir el gestor de documentos.
+  \item Localizar un documento en etapa \textbf{V - Ventanilla}.
+  \item Presionar el botón \textbf{Aprobar}.
+  \item Confirmar el mensaje del sistema.
+\end{enumerate}
+
+\textbf{Ejemplo:} la operadora Ana Martínez aprueba el expediente creado por María García.
+
+\textbf{Resultado esperado:} el documento cambia a etapa \textbf{O - Operador / Verificación}.
+
+\screenshot{capturas/06-aprobacion-operador.png}{Botón de aprobación visible para el operador.}{fig:aprobar-operador}
+\screenshot{capturas/07-documento-etapa-operador.png}{Documento avanzado a etapa Operador / Verificación.}{fig:documento-operador}
+
+\section{Firmar documento como coordinador}
+
+\textbf{Objetivo:} firmar digitalmente un documento que está en etapa Operador / Verificación.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Iniciar sesión con rol coordinador.
+  \item Abrir el gestor de documentos.
+  \item Localizar un documento en etapa \textbf{O - Operador / Verificación}.
+  \item Presionar \textbf{Firmar documento}.
+  \item Ingresar la contraseña de firma cuando el sistema la solicite.
+  \item Confirmar el mensaje de firma correcta.
+\end{enumerate}
+
+\textbf{Ejemplo:} el coordinador Carlos Pérez firma el expediente usando su contraseña de firma.
+
+\textbf{Resultado esperado:} el sistema genera un folio de firma, registra la fecha, identifica al coordinador firmante y cambia el documento a etapa \textbf{C - Coordinador / Firma}.
+
+\screenshot{capturas/08-firma-coordinador.png}{Acción de firma disponible para el coordinador.}{fig:firma-coordinador}
+\screenshot{capturas/09-ticket-firma.png}{Ticket y folio generados después de la firma digital.}{fig:ticket-firma}
+
+\section{Verificar firma digital}
+
+\textbf{Objetivo:} comprobar que la firma registrada pertenece al coordinador y corresponde al documento.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Abrir el gestor de documentos.
+  \item Localizar un documento con ticket de firma.
+  \item Presionar \textbf{Verificar firma}.
+  \item Revisar el mensaje de verificación mostrado por el sistema.
+\end{enumerate}
+
+\textbf{Resultado esperado:} el sistema indica si la firma es válida y muestra el coordinador asociado.
+
+\screenshot{capturas/10-verificacion-firma.png}{Documento firmado con opción de verificación disponible.}{fig:verificacion-firma}
+
+\section{Realizar inserción final como administrador}
+
+\textbf{Objetivo:} cerrar el flujo documental después de la firma del coordinador.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Iniciar sesión con rol administrador.
+  \item Abrir el gestor de documentos.
+  \item Localizar un documento en etapa \textbf{C - Coordinador / Firma}.
+  \item Presionar \textbf{Inserción final}.
+  \item Confirmar el mensaje del sistema.
+\end{enumerate}
+
+\textbf{Ejemplo:} Juan López finaliza el expediente firmado por Carlos Pérez.
+
+\textbf{Resultado esperado:} el documento cambia a etapa \textbf{A - Inserción final} y muestra la etiqueta \textbf{Finalizado}.
+
+\screenshot{capturas/11-insercion-final-admin.png}{Acción de inserción final disponible para el administrador.}{fig:insercion-final}
+\screenshot{capturas/12-documento-finalizado.png}{Documento finalizado en etapa Inserción final.}{fig:documento-finalizado}
+
+\chapter{Solución de Problemas}
+
+\begin{longtable}{p{0.30\textwidth} p{0.31\textwidth} p{0.27\textwidth}}
+\caption{Errores comunes y acciones recomendadas}
+\label{tab:problemas}\\
+\toprule
+\textbf{Problema} & \textbf{Causa probable} & \textbf{Qué hacer} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Problema} & \textbf{Causa probable} & \textbf{Qué hacer} \\
+\midrule
+\endhead
+Credenciales incorrectas & Correo o contraseña inválidos. & Revisar datos de acceso y solicitar restablecimiento si es necesario. \\
+Respuesta inválida del servidor & El backend devolvió texto no compatible con JSON o ocurrió un error PHP. & Revisar conexión al servidor, logs y configuración de PHP. \\
+Archivo no permitido & La extensión no está autorizada por el sistema. & Usar archivos PDF, DOC, DOCX, JPG, JPEG, PNG o XLSX. \\
+Usuario sin coordinador asignado & Un operador o consulta no tiene coordinador relacionado. & Editar el usuario y asignarle un coordinador activo. \\
+Documento sin archivo físico & El documento no tiene archivo o la ruta no existe. & Verificar la carga del archivo y la carpeta de documentos. \\
+Contraseña de firma incorrecta & La contraseña no abre la clave privada del coordinador. & Capturar nuevamente la contraseña o regenerar llaves según el procedimiento técnico. \\
+Documento en etapa incorrecta & Se intenta avanzar o firmar desde una etapa no permitida. & Revisar la etapa actual y usar el rol correspondiente. \\
+\bottomrule
+\end{longtable}
+
+\chapter{Preguntas Frecuentes}
+
+\textbf{¿Qué significa el flujo V, O, C, A?}
+
+Representa las etapas Ventanilla, Operador / Verificación, Coordinador / Firma e Inserción final. Cada etapa define qué rol puede intervenir.
+
+\textbf{¿Todos los usuarios pueden subir documentos?}
+
+El sistema permite crear documentos desde el gestor para roles autorizados. Los usuarios operador y consulta deben tener coordinador asignado para que el documento quede vinculado correctamente.
+
+\textbf{¿Qué formatos de archivo se aceptan?}
+
+El backend acepta PDF, DOC, DOCX, JPG, JPEG, PNG y XLSX.
+
+\textbf{¿Quién puede aprobar desde Ventanilla?}
+
+El operador y el administrador pueden aprobar documentos en etapa Ventanilla.
+
+\textbf{¿Quién puede firmar documentos?}
+
+Solo el coordinador asignado al documento puede firmar cuando el documento está en etapa Operador / Verificación.
+
+\textbf{¿Qué es el folio de firma?}
+
+Es un identificador generado después de la firma digital. Permite consultar quién firmó, la fecha y la acción realizada.
+
+\textbf{¿Por qué no aparece un botón de acción?}
+
+El botón depende del rol del usuario y de la etapa del documento. Si no aparece, probablemente el usuario no tiene permiso para esa acción o el documento está en una etapa distinta.
+
+\chapter{Referencias}
+
+Las referencias de operación se basan en la interfaz del sistema Casa Monarca y en las instrucciones de formato del documento \textit{ManualUsuarioMA2006B2026.pdf}. Las capturas incluidas fueron generadas en un ambiente local de demostración usando el frontend existente y datos demo para representar el flujo completo.
+
+\end{document}
