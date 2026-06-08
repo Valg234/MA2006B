@@ -12,10 +12,16 @@ function GestorDocumentos() {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   const [documentos, setDocumentos] = useState([]);
+  const [coordinadores, setCoordinadores] = useState([]);
+
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [archivo, setArchivo] = useState(null);
   const [mensaje, setMensaje] = useState("");
+
+  const [documentoFirma, setDocumentoFirma] = useState(null);
+  const [passwordFirma, setPasswordFirma] = useState("");
+  const [coordinadoresSeleccionados, setCoordinadoresSeleccionados] = useState([]);
 
   const cargarDocumentos = async () => {
     const res = await fetch(
@@ -29,8 +35,18 @@ function GestorDocumentos() {
     }
   };
 
+  const cargarCoordinadores = async () => {
+    const res = await fetch("/api/coordinadores.php");
+    const data = await res.json();
+
+    if (data.success) {
+      setCoordinadores(data.coordinadores);
+    }
+  };
+
   useEffect(() => {
     cargarDocumentos();
+    cargarCoordinadores();
   }, []);
 
   const crearDocumento = async (e) => {
@@ -110,10 +126,116 @@ function GestorDocumentos() {
     cargarDocumentos();
   };
 
-  const firmarDocumento = async (documento_id) => {
-    const passwordFirma = window.prompt("Ingresa tu contraseña de firma:");
+  const rechazarDocumento = async (doc) => {
+    const motivo = window.prompt("Escribe el motivo del rechazo:");
+
+    if (!motivo) {
+      return;
+    }
+
+    const res = await fetch("/api/rechazar_documento.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        documento_id: doc.id,
+        usuario_id: usuario.id,
+        motivo,
+      }),
+    });
+
+    const texto = await res.text();
+    console.log("Respuesta rechazar_documento:", texto);
+
+    let data;
+
+    try {
+      data = JSON.parse(texto);
+    } catch (error) {
+      alert("Respuesta inválida del servidor al rechazar.");
+      return;
+    }
+
+    if (!data.success) {
+      alert(data.mensaje || "No se pudo rechazar el documento");
+      return;
+    }
+
+    alert(data.mensaje || "Documento rechazado correctamente");
+    cargarDocumentos();
+  };
+
+  const eliminarDocumento = async (doc) => {
+    const confirmar = window.confirm(
+      `¿Seguro que quieres eliminar el documento "${doc.titulo}"? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    const res = await fetch("/api/eliminar_documento.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        documento_id: doc.id,
+        usuario_id: usuario.id,
+      }),
+    });
+
+    const texto = await res.text();
+    console.log("Respuesta eliminar_documento:", texto);
+
+    let data;
+
+    try {
+      data = JSON.parse(texto);
+    } catch (error) {
+      alert("Respuesta inválida del servidor al eliminar.");
+      return;
+    }
+
+    if (!data.success) {
+      alert(data.mensaje || "No se pudo eliminar el documento");
+      return;
+    }
+
+    alert(data.mensaje || "Documento eliminado correctamente");
+    cargarDocumentos();
+  };
+
+  const abrirPanelFirma = (doc) => {
+    setDocumentoFirma(doc);
+    setPasswordFirma("");
+    setCoordinadoresSeleccionados([]);
+  };
+
+  const cerrarPanelFirma = () => {
+    setDocumentoFirma(null);
+    setPasswordFirma("");
+    setCoordinadoresSeleccionados([]);
+  };
+
+  const toggleCoordinador = (coordinadorId) => {
+    setCoordinadoresSeleccionados((prev) => {
+      if (prev.includes(coordinadorId)) {
+        return prev.filter((id) => id !== coordinadorId);
+      }
+
+      return [...prev, coordinadorId];
+    });
+  };
+
+  const firmarDocumento = async () => {
+    if (!documentoFirma) {
+      return;
+    }
 
     if (!passwordFirma) {
+      alert("Ingresa tu contraseña de firma.");
       return;
     }
 
@@ -123,9 +245,10 @@ function GestorDocumentos() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        documento_id,
+        documento_id: documentoFirma.id,
         usuario_id: usuario.id,
         password_firma: passwordFirma,
+        coordinadores_adicionales: coordinadoresSeleccionados,
       }),
     });
 
@@ -152,6 +275,7 @@ function GestorDocumentos() {
       alert(data.mensaje || "Documento firmado correctamente");
     }
 
+    cerrarPanelFirma();
     cargarDocumentos();
   };
 
@@ -172,14 +296,33 @@ function GestorDocumentos() {
       return;
     }
 
-    if (data.coordinador) {
-      alert(`${data.mensaje}\nCoordinador: ${data.coordinador}`);
+    if (!data.success) {
+      alert(data.mensaje || "No se pudo verificar la firma");
+      return;
+    }
+
+    if (data.firmas && data.firmas.length > 0) {
+      const resumen = data.firmas
+        .map((firma) => {
+          return `${firma.coordinador || "Coordinador"}: ${firma.estado} / ${firma.verificacion}`;
+        })
+        .join("\n");
+
+      alert(`${data.mensaje}\n\n${resumen}`);
     } else {
       alert(data.mensaje || "Verificación realizada");
     }
   };
 
+  const estaRechazado = (doc) => {
+    return doc.estado_documento === "rechazado";
+  };
+
   const puedeAvanzar = (doc) => {
+    if (estaRechazado(doc)) {
+      return false;
+    }
+
     if (usuario.rol === "admin" && (doc.etapa === "V" || doc.etapa === "C")) {
       return true;
     }
@@ -191,8 +334,60 @@ function GestorDocumentos() {
     return false;
   };
 
+  const tieneFirmaPendiente = (doc) => {
+    if (!doc.firmas || doc.firmas.length === 0) {
+      return false;
+    }
+
+    return doc.firmas.some(
+      (firma) =>
+        Number(firma.coordinador_id) === Number(usuario.id) &&
+        firma.estado === "pendiente"
+    );
+  };
+
   const puedeFirmar = (doc) => {
-    return usuario.rol === "coordinador" && doc.etapa === "O";
+    if (estaRechazado(doc)) {
+      return false;
+    }
+
+    if (usuario.rol !== "coordinador") {
+      return false;
+    }
+
+    if (doc.etapa === "O" && Number(doc.coordinador_id) === Number(usuario.id)) {
+      return true;
+    }
+
+    if (doc.etapa === "C" && tieneFirmaPendiente(doc)) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const puedeRechazar = (doc) => {
+    if (estaRechazado(doc) || doc.etapa === "A") {
+      return false;
+    }
+
+    if (usuario.rol === "admin") {
+      return true;
+    }
+
+    if (usuario.rol === "operador" && doc.etapa === "V") {
+      return true;
+    }
+
+    if (usuario.rol === "coordinador" && (doc.etapa === "O" || doc.etapa === "C")) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const puedeEliminar = () => {
+    return usuario.rol === "admin";
   };
 
   const textoBotonAvance = (doc) => {
@@ -210,8 +405,36 @@ function GestorDocumentos() {
     return documentos.filter((doc) => doc.etapa === etapa).length;
   };
 
+  const contarRechazados = () => {
+    return documentos.filter((doc) => estaRechazado(doc)).length;
+  };
+
   const claseEtapa = (etapa) => {
     return `stage-badge stage-${(etapa || "").toLowerCase()}`;
+  };
+
+  const coordinadoresDisponiblesParaFirma = () => {
+    if (!documentoFirma) {
+      return [];
+    }
+
+    const yaFirmantes = (documentoFirma.firmas || []).map((firma) =>
+      Number(firma.coordinador_id)
+    );
+
+    return coordinadores.filter((coord) => {
+      const coordId = Number(coord.id);
+
+      if (coordId === Number(usuario.id)) {
+        return false;
+      }
+
+      if (yaFirmantes.includes(coordId)) {
+        return false;
+      }
+
+      return true;
+    });
   };
 
   return (
@@ -255,6 +478,11 @@ function GestorDocumentos() {
         <div className="stat-card">
           <span className="stat-number">{contarEtapa("A")}</span>
           <span className="stat-label">Finalizados</span>
+        </div>
+
+        <div className="stat-card">
+          <span className="stat-number text-danger">{contarRechazados()}</span>
+          <span className="stat-label">Rechazados</span>
         </div>
       </div>
 
@@ -304,6 +532,77 @@ function GestorDocumentos() {
         </button>
       </form>
 
+      {documentoFirma && (
+        <div className="card form-card p-4 mb-4 border-primary">
+          <h4>Firmar documento</h4>
+
+          <p className="mb-2">
+            Documento: <strong>{documentoFirma.titulo}</strong>
+          </p>
+
+          <div className="mb-3">
+            <label className="form-label">Contraseña de firma</label>
+            <input
+              type="password"
+              className="form-control"
+              value={passwordFirma}
+              onChange={(e) => setPasswordFirma(e.target.value)}
+              placeholder="Ingresa tu contraseña de firma"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">
+              Coordinadores adicionales que también deben firmar
+            </label>
+
+            {coordinadoresDisponiblesParaFirma().length === 0 ? (
+              <p className="text-muted mb-0">
+                No hay coordinadores adicionales disponibles.
+              </p>
+            ) : (
+              <div className="row">
+                {coordinadoresDisponiblesParaFirma().map((coord) => (
+                  <div className="col-md-6 mb-2" key={coord.id}>
+                    <label className="form-check border rounded p-2">
+                      <input
+                        type="checkbox"
+                        className="form-check-input me-2"
+                        checked={coordinadoresSeleccionados.includes(
+                          Number(coord.id)
+                        )}
+                        onChange={() => toggleCoordinador(Number(coord.id))}
+                      />
+                      <span className="form-check-label">
+                        {coord.nombre} - {coord.email}
+                      </span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex gap-2">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={firmarDocumento}
+            >
+              Confirmar firma
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={cerrarPanelFirma}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="table-card">
         <div className="table-card-header">
           <div>
@@ -320,14 +619,14 @@ function GestorDocumentos() {
                 <th>Etapa</th>
                 <th>Coordinador</th>
                 <th>Archivo</th>
-                <th>Ticket de firma</th>
+                <th>Firmas</th>
                 <th>Acción</th>
               </tr>
             </thead>
 
             <tbody>
               {documentos.map((doc) => (
-                <tr key={doc.id}>
+                <tr key={doc.id} className={estaRechazado(doc) ? "table-danger" : ""}>
                   <td>
                     <div className="doc-title">{doc.titulo}</div>
                     {doc.descripcion && (
@@ -339,6 +638,23 @@ function GestorDocumentos() {
                     <span className={claseEtapa(doc.etapa)}>
                       {doc.etapa} - {etapas[doc.etapa]}
                     </span>
+
+                    {Number(doc.firmas_pendientes) > 0 && !estaRechazado(doc) && (
+                      <div className="mt-2">
+                        <span className="badge bg-warning text-dark">
+                          {doc.firmas_pendientes} firma(s) pendiente(s)
+                        </span>
+                      </div>
+                    )}
+
+                    {estaRechazado(doc) && (
+                      <div className="mt-2">
+                        <span className="badge bg-danger">Rechazado</span>
+                        <div className="small text-danger mt-1">
+                          {doc.motivo_rechazo || "Sin motivo registrado"}
+                        </div>
+                      </div>
+                    )}
                   </td>
 
                   <td>
@@ -367,38 +683,50 @@ function GestorDocumentos() {
                   </td>
 
                   <td>
-                    {doc.folio_firma ? (
+                    {doc.firmas && doc.firmas.length > 0 ? (
                       <div className="ticket-box">
-                        <div className="ticket-folio">{doc.folio_firma}</div>
+                        {doc.firmas.map((firma, index) => (
+                          <div className="mb-3" key={`${doc.id}-${index}`}>
+                            <div>
+                              <strong>{firma.coordinador_nombre}</strong>
+                            </div>
 
-                        <div>
-                          <strong>Firmado por:</strong>{" "}
-                          {doc.firmado_por_nombre || "Coordinador"}
-                        </div>
+                            <div>
+                              Estado:{" "}
+                              {firma.estado === "firmado" ? (
+                                <span className="badge bg-success">
+                                  Firmado
+                                </span>
+                              ) : (
+                                <span className="badge bg-warning text-dark">
+                                  Pendiente
+                                </span>
+                              )}
+                            </div>
 
-                        <div>
-                          <strong>Acción:</strong>{" "}
-                          {doc.accion_firma || "Documento firmado digitalmente"}
-                        </div>
+                            {firma.folio_firma && (
+                              <div className="ticket-folio mt-1">
+                                {firma.folio_firma}
+                              </div>
+                            )}
 
-                        <div>
-                          <strong>Fecha:</strong>{" "}
-                          {formatearFecha(doc.fecha_firma)}
-                        </div>
-                      </div>
-                    ) : doc.firma_coordinador ? (
-                      <div className="ticket-box">
-                        <span className="badge bg-warning text-dark mb-2">
-                          Firmado sin folio
-                        </span>
+                            {firma.accion_firma && (
+                              <div>
+                                <strong>Acción:</strong> {firma.accion_firma}
+                              </div>
+                            )}
 
-                        <div>
-                          <strong>Fecha:</strong>{" "}
-                          {formatearFecha(doc.fecha_firma)}
-                        </div>
+                            {firma.fecha_firma && (
+                              <div>
+                                <strong>Fecha:</strong>{" "}
+                                {formatearFecha(firma.fecha_firma)}
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     ) : (
-                      <span className="no-data">Sin firma</span>
+                      <span className="no-data">Sin firmas</span>
                     )}
                   </td>
 
@@ -416,18 +744,27 @@ function GestorDocumentos() {
                       {puedeFirmar(doc) && (
                         <button
                           className="btn btn-primary btn-sm"
-                          onClick={() => firmarDocumento(doc.id)}
+                          onClick={() => abrirPanelFirma(doc)}
                         >
                           Firmar documento
                         </button>
                       )}
 
-                      {doc.firma_coordinador && (
+                      {puedeRechazar(doc) && (
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => rechazarDocumento(doc)}
+                        >
+                          Rechazar
+                        </button>
+                      )}
+
+                      {doc.firmas && doc.firmas.length > 0 && (
                         <button
                           className="btn btn-outline-dark btn-sm"
                           onClick={() => verificarFirma(doc.id)}
                         >
-                          Verificar firma
+                          Verificar firmas
                         </button>
                       )}
 
@@ -437,10 +774,21 @@ function GestorDocumentos() {
                         </span>
                       )}
 
+                      {puedeEliminar() && (
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => eliminarDocumento(doc)}
+                        >
+                          Eliminar
+                        </button>
+                      )}
+
                       {!puedeAvanzar(doc) &&
                         !puedeFirmar(doc) &&
-                        !doc.firma_coordinador &&
-                        doc.etapa !== "A" && (
+                        !puedeRechazar(doc) &&
+                        (!doc.firmas || doc.firmas.length === 0) &&
+                        doc.etapa !== "A" &&
+                        !puedeEliminar() && (
                           <span className="no-data">Sin acción</span>
                         )}
                     </div>

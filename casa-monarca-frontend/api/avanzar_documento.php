@@ -25,10 +25,7 @@ if (!$documento_id || !$usuario_id) {
     exit();
 }
 
-/*
-  Consultamos al usuario desde la BD.
-  Así no dependemos del rol que venga del frontend.
-*/
+/* Buscar usuario real */
 $stmtUsuario = $conexion->prepare("
     SELECT id, nombre, email, rol, coordinador_id, clave_publica
     FROM usuarios
@@ -49,11 +46,9 @@ if ($resultUsuario->num_rows === 0) {
 $usuario = $resultUsuario->fetch_assoc();
 $rol = strtolower($usuario["rol"]);
 
-/*
-  Consultamos el documento.
-*/
+/* Buscar documento */
 $stmt = $conexion->prepare("
-    SELECT id, titulo, etapa, coordinador_id, creado_por
+    SELECT id, titulo, etapa, coordinador_id, creado_por, estado_documento
     FROM documentos
     WHERE id = ?
     LIMIT 1
@@ -72,27 +67,21 @@ if ($result->num_rows === 0) {
 $doc = $result->fetch_assoc();
 $etapa_actual = $doc["etapa"];
 
+/* Bloquear documentos rechazados */
+if ($doc["estado_documento"] === "rechazado") {
+    ob_clean();
+    echo json_encode([
+        "success" => false,
+        "mensaje" => "No se puede avanzar un documento rechazado"
+    ]);
+    exit();
+}
+
 if ($etapa_actual === "A") {
     ob_clean();
     echo json_encode(["success" => false, "mensaje" => "El documento ya está en Inserción final"]);
     exit();
 }
-
-/*
-  Validación por coordinador:
-
-  admin:
-    puede avanzar cualquier documento
-
-  coordinador:
-    solo documentos donde documentos.coordinador_id = su id
-
-  operador:
-    solo documentos de su coordinador_id
-
-  consulta:
-    no puede avanzar
-*/
 
 if ($rol === "consulta") {
     ob_clean();
@@ -101,11 +90,9 @@ if ($rol === "consulta") {
 }
 
 if ($rol === "coordinador") {
-    if (intval($doc["coordinador_id"]) !== intval($usuario["id"])) {
-        ob_clean();
-        echo json_encode(["success" => false, "mensaje" => "Este documento no pertenece a tu coordinación"]);
-        exit();
-    }
+    ob_clean();
+    echo json_encode(["success" => false, "mensaje" => "El coordinador debe usar la opción de firma"]);
+    exit();
 }
 
 if ($rol === "operador") {
@@ -125,17 +112,10 @@ if ($rol === "operador") {
 $nueva_etapa = null;
 
 /*
-  Flujo VOCA:
-
-  V = Ventanilla       consulta sube
-  O = Operador         operador aprueba
-  C = Coordinador      coordinador firma
-  A = Admin            admin hace inserción final
-
-  Avances:
-  V -> O: operador o admin
-  O -> C: coordinador o admin
-  C -> A: admin
+  Flujo:
+  V -> O: operador/admin aprueba
+  O -> C: solo mediante firma del coordinador
+  C -> A: admin inserción final
 */
 
 if ($etapa_actual === "V") {
@@ -156,10 +136,53 @@ if ($etapa_actual === "O") {
     ]);
     exit();
 }
+
 if ($etapa_actual === "C") {
     if ($rol !== "admin") {
         ob_clean();
         echo json_encode(["success" => false, "mensaje" => "Solo Admin puede hacer la Inserción final"]);
+        exit();
+    }
+
+    $stmtPendientes = $conexion->prepare("
+        SELECT COUNT(*) AS pendientes
+        FROM documentos_firmas
+        WHERE documento_id = ?
+          AND estado = 'pendiente'
+    ");
+
+    $stmtPendientes->bind_param("i", $documento_id);
+    $stmtPendientes->execute();
+    $resPendientes = $stmtPendientes->get_result();
+    $pendientes = $resPendientes->fetch_assoc()["pendientes"];
+
+    if (intval($pendientes) > 0) {
+        ob_clean();
+        echo json_encode([
+            "success" => false,
+            "mensaje" => "No se puede hacer inserción final: hay firmas pendientes"
+        ]);
+        exit();
+    }
+
+    $stmtFirmadas = $conexion->prepare("
+        SELECT COUNT(*) AS firmadas
+        FROM documentos_firmas
+        WHERE documento_id = ?
+          AND estado = 'firmado'
+    ");
+
+    $stmtFirmadas->bind_param("i", $documento_id);
+    $stmtFirmadas->execute();
+    $resFirmadas = $stmtFirmadas->get_result();
+    $firmadas = $resFirmadas->fetch_assoc()["firmadas"];
+
+    if (intval($firmadas) === 0) {
+        ob_clean();
+        echo json_encode([
+            "success" => false,
+            "mensaje" => "No se puede hacer inserción final: el documento no tiene firmas"
+        ]);
         exit();
     }
 

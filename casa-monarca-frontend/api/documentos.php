@@ -12,8 +12,7 @@ if (!$usuario_id) {
 }
 
 /*
-  Primero buscamos al usuario real desde BD.
-  No confiamos solo en el rol que manda el frontend.
+  Buscamos al usuario real desde BD.
 */
 $stmtUsuario = $conexion->prepare("
     SELECT id, nombre, email, rol, coordinador_id, clave_publica
@@ -41,50 +40,54 @@ $rol = strtolower($usuario["rol"]);
     ve todos los documentos
 
   coordinador:
-    ve documentos asignados a él
+    ve documentos donde él es coordinador principal
+    o documentos donde fue agregado como firma adicional
 
-  operador:
-    ve documentos del coordinador al que pertenece
-
-  consulta:
-    ve documentos del coordinador al que pertenece
+  operador / consulta:
+    ven documentos del coordinador al que pertenecen
 */
 
 if ($rol === "admin") {
     $stmt = $conexion->prepare("
-        SELECT 
-            d.*, 
+        SELECT
+            d.*,
             uc.nombre AS coordinador_nombre,
             uc.email AS coordinador_email,
             creador.nombre AS creado_por_nombre,
             creador.email AS creado_por_email,
-	    firmante.nombre AS firmado_por_nombre,
-	    firmante.email AS firmado_por_email
+            firmante.nombre AS firmado_por_nombre,
+            firmante.email AS firmado_por_email
         FROM documentos d
         LEFT JOIN usuarios uc ON d.coordinador_id = uc.id
         LEFT JOIN usuarios creador ON d.creado_por = creador.id
-	LEFT JOIN usuarios firmante ON d.firmado_por = firmante.id
+        LEFT JOIN usuarios firmante ON d.firmado_por = firmante.id
         ORDER BY d.fecha_creacion DESC
     ");
 } else if ($rol === "coordinador") {
     $stmt = $conexion->prepare("
-        SELECT 
-            d.*, 
+        SELECT
+            d.*,
             uc.nombre AS coordinador_nombre,
             uc.email AS coordinador_email,
             creador.nombre AS creado_por_nombre,
             creador.email AS creado_por_email,
-	firmante.nombre AS firmado_por_nombre,
-	firmante.email AS firmado_por_email
+            firmante.nombre AS firmado_por_nombre,
+            firmante.email AS firmado_por_email
         FROM documentos d
         LEFT JOIN usuarios uc ON d.coordinador_id = uc.id
         LEFT JOIN usuarios creador ON d.creado_por = creador.id
-	LEFT JOIN usuarios firmante ON d.firmado_por = firmante.id
+        LEFT JOIN usuarios firmante ON d.firmado_por = firmante.id
         WHERE d.coordinador_id = ?
+           OR EXISTS (
+                SELECT 1
+                FROM documentos_firmas df
+                WHERE df.documento_id = d.id
+                  AND df.coordinador_id = ?
+           )
         ORDER BY d.fecha_creacion DESC
     ");
 
-    $stmt->bind_param("i", $usuario["id"]);
+    $stmt->bind_param("ii", $usuario["id"], $usuario["id"]);
 } else if ($rol === "operador" || $rol === "consulta") {
     if (empty($usuario["coordinador_id"])) {
         echo json_encode([
@@ -96,18 +99,18 @@ if ($rol === "admin") {
     }
 
     $stmt = $conexion->prepare("
-        SELECT 
-            d.*, 
+        SELECT
+            d.*,
             uc.nombre AS coordinador_nombre,
             uc.email AS coordinador_email,
             creador.nombre AS creado_por_nombre,
             creador.email AS creado_por_email,
-	firmante.nombre AS firmado_por_nombre,
-	firmante.email AS firmado_por_email
+            firmante.nombre AS firmado_por_nombre,
+            firmante.email AS firmado_por_email
         FROM documentos d
         LEFT JOIN usuarios uc ON d.coordinador_id = uc.id
         LEFT JOIN usuarios creador ON d.creado_por = creador.id
-	LEFT JOIN usuarios firmante ON d.firmado_por = firmante.id
+        LEFT JOIN usuarios firmante ON d.firmado_por = firmante.id
         WHERE d.coordinador_id = ?
         ORDER BY d.fecha_creacion DESC
     ");
@@ -128,10 +131,77 @@ if (!$stmt->execute()) {
 }
 
 $result = $stmt->get_result();
-
 $documentos = [];
 
 while ($row = $result->fetch_assoc()) {
+    $documento_id = $row["id"];
+
+    $stmtFirmas = $conexion->prepare("
+        SELECT
+            df.id,
+            df.coordinador_id,
+            df.estado,
+            df.hash_archivo,
+            df.firma,
+            df.folio_firma,
+            df.accion_firma,
+            df.fecha_solicitud,
+            df.fecha_firma,
+            u.nombre AS coordinador_nombre,
+            u.email AS coordinador_email
+        FROM documentos_firmas df
+        LEFT JOIN usuarios u ON df.coordinador_id = u.id
+        WHERE df.documento_id = ?
+        ORDER BY df.fecha_solicitud ASC, df.id ASC
+    ");
+
+    $stmtFirmas->bind_param("i", $documento_id);
+    $stmtFirmas->execute();
+    $resFirmas = $stmtFirmas->get_result();
+
+    $firmas = [];
+    $firmas_pendientes = 0;
+    $firmas_firmadas = 0;
+
+    while ($firma = $resFirmas->fetch_assoc()) {
+        if ($firma["estado"] === "pendiente") {
+            $firmas_pendientes++;
+        }
+
+        if ($firma["estado"] === "firmado") {
+            $firmas_firmadas++;
+        }
+
+        $firmas[] = $firma;
+    }
+
+    /*
+      Compatibilidad con firmas anteriores guardadas directo en documentos.
+      Si el documento tiene firma vieja, pero todavía no tiene registros en documentos_firmas,
+      la mostramos para no perderla visualmente.
+    */
+    if (count($firmas) === 0 && !empty($row["firma_coordinador"])) {
+        $firmas_firmadas = 1;
+
+        $firmas[] = [
+            "id" => null,
+            "coordinador_id" => $row["firmado_por"],
+            "estado" => "firmado",
+            "hash_archivo" => $row["hash_archivo"],
+            "firma" => $row["firma_coordinador"],
+            "folio_firma" => $row["folio_firma"],
+            "accion_firma" => $row["accion_firma"],
+            "fecha_solicitud" => null,
+            "fecha_firma" => $row["fecha_firma"],
+            "coordinador_nombre" => $row["firmado_por_nombre"],
+            "coordinador_email" => $row["firmado_por_email"]
+        ];
+    }
+
+    $row["firmas"] = $firmas;
+    $row["firmas_pendientes"] = $firmas_pendientes;
+    $row["firmas_firmadas"] = $firmas_firmadas;
+
     $documentos[] = $row;
 }
 

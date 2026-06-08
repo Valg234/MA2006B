@@ -7,7 +7,7 @@ Thumbs.db
 .LSOverride
 
 # Dependencies
-node_modules/
+node_modulessudo mariadb -u root/
 venv/
 vendor/
 package-lock.json
