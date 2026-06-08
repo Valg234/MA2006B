@@ -7,16 +7,14 @@ Thumbs.db
 .LSOverride
 
 # Dependencies
-node_modulessudo mariadb -u root/
+node_modules/
 venv/
 vendor/
-package-lock.json
 
-# Environment & Secrets
+# Environment
 .env
 .env.local
 .env.*.local
-conexion.php
 
 # Build & Generated Files
 dist/
@@ -41,10 +39,13 @@ yarn-error.log*
 # Cache
 .cache/
 .eslintcache
+.vite/
 
 # Uploads & User Files (generados en tiempo de ejecución)
-casa-monarca-frontend/uploads/
-!casa-monarca-frontend/uploads/.gitkeep
+casa-monarca-frontend/uploads/*
+!casa-monarca-frontend/uploads/documentos/
+casa-monarca-frontend/uploads/documentos/*
+!casa-monarca-frontend/uploads/documentos/.gitkeep
 
 # LaTeX/Documentation
 manual_usuario/*.aux

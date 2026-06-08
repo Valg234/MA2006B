@@ -16,7 +16,7 @@ El frontend corre en el puerto 5173 con Vite. Las llamadas a `/api` se redirigen
 
 ## Requisitos previos
 
-- **Node.js** v18 o superior — [descargar aqui](https://nodejs.org)
+- **Node.js** v20.19 o superior, o v22.12 o superior — [descargar aqui](https://nodejs.org)
 - **XAMPP** — [descargar aqui](https://www.apachefriends.org)
 
 Para verificar que Node.js esta instalado:
@@ -59,23 +59,23 @@ Esto crea la base de datos, las 6 tablas necesarias, y un usuario administrador 
 
 ### 4. Configurar la conexion a MySQL
 
-Abrir el archivo `conexion.php` en la raiz del proyecto y verificar que los datos coincidan con tu instalacion de MySQL:
+Abrir `casa-monarca-frontend/conexion.php` y reemplazar los marcadores con los datos de tu instalacion de MySQL:
 
 ```php
 $host = "localhost";
-$usuario = "root";
-$password = "";        // en XAMPP por defecto es vacio
+$usuario = "CAMBIAR_USUARIO";
+$password = "CAMBIAR_CONTRASENA";
 $base_datos = "casa_monarca";
 ```
 
-> En la mayoria de instalaciones de XAMPP el password de root es vacio (`""`). Si configuraste uno diferente, cambialo aqui.
+> No publiques credenciales reales. Cada instalacion debe configurar su propio usuario y una contrasena segura antes de ejecutar o desplegar el proyecto.
 
 ### 5. Instalar dependencias de Node
 
-Abrir una terminal en la carpeta del proyecto y ejecutar:
+Abrir una terminal en la carpeta `casa-monarca-frontend` y ejecutar:
 
 ```bash
-npm install
+npm ci
 ```
 
 Esto descarga todas las librerias (React, Vite, Bootstrap, etc.) en la carpeta `node_modules/`. Solo se necesita hacer una vez.
@@ -105,11 +105,12 @@ casa-monarca-frontend/
 ├── src/                  # Frontend React
 │   ├── pages/            # Paginas (Login, Dashboard, etc.)
 │   └── ...
-├── conexion.php          # Conexion a MySQL
-├── database.sql          # Schema + datos iniciales
+├── conexion.php          # Plantilla de conexion a MySQL (requiere credenciales)
 ├── vite.config.js        # Config de Vite (proxy a Apache)
 ├── package.json          # Dependencias de Node
+├── package-lock.json     # Versiones exactas para instalaciones reproducibles
 └── index.html            # Punto de entrada HTML
+database.sql              # Schema + datos iniciales
 ```
 
 ## Comandos disponibles
@@ -120,6 +121,8 @@ casa-monarca-frontend/
 | `npm run build` | Genera el build de produccion en `dist/` |
 | `npm run preview` | Sirve el build de produccion localmente |
 | `npm run lint` | Ejecuta ESLint para revisar el codigo |
+
+> Estado conocido: `npm run lint` reporta actualmente 20 errores y 2 advertencias. Esta deuda tecnica no impide generar el build, pero debe resolverse antes de usar ESLint como validacion obligatoria.
 
 ## Solucion de problemas
 
