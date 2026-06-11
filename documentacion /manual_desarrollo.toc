@@ -1,0 +1,73 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{\numberline {1}Descripción General}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Propósito del sistema}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Alcance}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Casos de uso principales}{2}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Arquitectura del Sistema}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Tipo de arquitectura}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Diagrama general}{3}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Componentes principales}{4}{section.2.3}%
+\contentsline {chapter}{\numberline {3}Stack Tecnológico}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Lenguajes}{5}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Frameworks y herramientas principales}{5}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Bibliotecas y dependencias}{6}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Estructura del Proyecto}{7}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Organización de carpetas}{7}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Descripción de módulos}{7}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Módulo \texttt {api/} — Backend PHP}{7}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Módulo \texttt {src/pages/} — Páginas React}{8}{subsection.4.2.2}%
+\contentsline {chapter}{\numberline {5}Configuración del Entorno}{9}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Requisitos de versiones}{9}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Variables de entorno}{9}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Archivos de configuración}{10}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Instalación y Ejecución}{11}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Pasos para levantar el sistema}{11}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Comandos principales}{12}{section.6.2}%
+\contentsline {chapter}{\numberline {7}Base de Datos}{13}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Descripción general}{13}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Tablas principales}{13}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Tabla \texttt {usuarios}}{13}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Tabla \texttt {migrantes}}{13}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}Tabla \texttt {documentos}}{14}{subsection.7.2.3}%
+\contentsline {subsection}{\numberline {7.2.4}Tabla \texttt {documentos\_historial}}{14}{subsection.7.2.4}%
+\contentsline {subsection}{\numberline {7.2.5}Tabla \texttt {documentos\_firmas}}{14}{subsection.7.2.5}%
+\contentsline {subsection}{\numberline {7.2.6}Tabla \texttt {solicitudes\_push}}{15}{subsection.7.2.6}%
+\contentsline {section}{\numberline {7.3}Relaciones entre tablas}{15}{section.7.3}%
+\contentsline {chapter}{\numberline {8}API / Interfaces}{16}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Convención general}{16}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Endpoints principales}{16}{section.8.2}%
+\contentsline {subsection}{\numberline {8.2.1}POST /api/login.php}{16}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {8.2.2}POST /api/avanzar\_documento.php}{17}{subsection.8.2.2}%
+\contentsline {subsection}{\numberline {8.2.3}POST /api/firmar\_documento.php}{17}{subsection.8.2.3}%
+\contentsline {subsection}{\numberline {8.2.4}POST /api/generar\_llaves\_coordinador.php}{17}{subsection.8.2.4}%
+\contentsline {chapter}{\numberline {9}Flujos y Lógica de Negocio}{18}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Flujo documental VOCA}{18}{section.9.1}%
+\contentsline {section}{\numberline {9.2}Reglas de negocio importantes}{18}{section.9.2}%
+\contentsline {section}{\numberline {9.3}Proceso de firma digital RSA}{19}{section.9.3}%
+\contentsline {chapter}{\numberline {10}Manejo de Errores}{20}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Estrategia de errores}{20}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Mensajes de error comunes}{20}{section.10.2}%
+\contentsline {section}{\numberline {10.3}Registro (logs)}{21}{section.10.3}%
+\contentsline {chapter}{\numberline {11}Pruebas}{22}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Tipos de pruebas}{22}{section.11.1}%
+\contentsline {section}{\numberline {11.2}Casos de prueba manuales realizados}{22}{section.11.2}%
+\contentsline {section}{\numberline {11.3}Cómo ejecutar ESLint}{22}{section.11.3}%
+\contentsline {chapter}{\numberline {12}Despliegue}{24}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Entornos}{24}{section.12.1}%
+\contentsline {section}{\numberline {12.2}Pasos para despliegue en producción}{24}{section.12.2}%
+\contentsline {section}{\numberline {12.3}Consideraciones y limitaciones conocidas (HostGator)}{24}{section.12.3}%
+\contentsline {chapter}{\numberline {13}Seguridad}{26}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Autenticación}{26}{section.13.1}%
+\contentsline {section}{\numberline {13.2}Firma digital}{26}{section.13.2}%
+\contentsline {section}{\numberline {13.3}Protección de datos sensibles}{26}{section.13.3}%
+\contentsline {section}{\numberline {13.4}Buenas prácticas implementadas}{27}{section.13.4}%
+\contentsline {chapter}{\numberline {14}Guía de Contribución}{28}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Convenciones de código}{28}{section.14.1}%
+\contentsline {subsection}{\numberline {14.1.1}Frontend (JavaScript/React)}{28}{subsection.14.1.1}%
+\contentsline {subsection}{\numberline {14.1.2}Backend (PHP)}{28}{subsection.14.1.2}%
+\contentsline {section}{\numberline {14.2}Flujo de trabajo con Git}{28}{section.14.2}%
+\contentsline {section}{\numberline {14.3}Cómo agregar funcionalidades}{29}{section.14.3}%
+\contentsline {chapter}{\numberline {15}Problemas Conocidos}{30}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Limitaciones de la versión 1.0}{30}{section.15.1}%
+\contentsline {chapter}{\numberline {16}FAQ Técnica}{31}{chapter.16}%
+\contentsline {chapter}{\numberline {17}Referencias}{32}{chapter.17}%

@@ -1,0 +1,1186 @@
+\documentclass[10pt,letterpaper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{helvet}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage{fancyvrb}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\geometry{
+  top=20mm,
+  bottom=20mm,
+  left=25mm,
+  right=25mm
+}
+
+\setstretch{1.05}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\captionsetup{font=small,labelfont=bf}
+
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\definecolor{codegreen}{rgb}{0.0,0.5,0.0}
+\definecolor{codepurple}{rgb}{0.4,0.0,0.6}
+
+\lstdefinestyle{phpstyle}{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codepurple}\bfseries,
+  commentstyle=\color{codegreen},
+  stringstyle=\color{orange},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=5pt,
+  tabsize=2,
+  showstringspaces=false,
+  language=PHP
+}
+
+\lstdefinestyle{bashstyle}{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  numbers=none,
+  tabsize=2,
+  showstringspaces=false
+}
+
+\lstdefinestyle{sqlstyle}{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codepurple}\bfseries,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=5pt,
+  tabsize=2,
+  language=SQL
+}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  pdftitle={Manual de Desarrollo - Gestor de Identidades MA2006B 2026},
+  pdfauthor={Equipo 5}
+}
+
+\begin{document}
+
+%% ============================================================
+%% PORTADA
+%% ============================================================
+\begin{titlepage}
+  \centering
+  \vspace*{0.5cm}
+
+  {\Large\bfseries Instituto Tecnológico y de Estudios Superiores de Monterrey\par}
+  \vspace{0.4cm}
+  \includegraphics[width=0.52\textwidth]{../manual_usuario/logos/tecnologico-de-monterrey-blue.png}
+  \vspace{0.6cm}
+
+  {\large\bfseries Escuela de Ingeniería y Ciencias\par}
+  \vspace{0.2cm}
+  {\large Ingeniería en Ciencia de Datos y Matemáticas\par}
+
+  \vspace{1.0cm}
+  {\Large\bfseries Manual de Desarrollo\par}
+  \vspace{0.2cm}
+  {\large Gestor de Identidades\par}
+  {\large Versión v1.0\par}
+
+  \vspace{1.0cm}
+  {\bfseries Socio Formador:} Casa Monarca\par
+  \vspace{0.5cm}
+  {\bfseries Profesores:} Raúl Gómez, Anas Wajid y Alberto F. Martínez\par
+
+  \vspace{0.8cm}
+  {\bfseries Equipo de trabajo:} Equipo 5\par
+  {\bfseries Grupo:} 603\par
+
+  \vspace{0.8cm}
+  {\bfseries Integrantes}\par
+  Alberto Rodríguez Reyes (A01383805)\par
+  Diego Alberto Rodríguez Ruiz (A01571638)\par
+  Rubén Jiménez Sarmiento (A01286256)\par
+  Hector Alonso Flores Melendez (A01571545)\par
+  Valeria García Hernández (A01742811)\par
+
+  \vfill
+  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 30 de abril de 2026\par
+\end{titlepage}
+
+%% ============================================================
+%% ÍNDICES
+%% ============================================================
+\pagenumbering{roman}
+\tableofcontents
+\listoftables
+\listoffigures
+\clearpage
+\pagenumbering{arabic}
+
+%% ============================================================
+%% CAPÍTULO 1 — DESCRIPCIÓN GENERAL
+%% ============================================================
+\chapter{Descripción General}
+
+\section{Propósito del sistema}
+
+El \textbf{Gestor de Identidades} es una aplicación web desarrollada para \textbf{Casa Monarca}, organización civil de atención a personas migrantes en Monterrey, Nuevo León. El sistema centraliza la gestión de usuarios, migrantes, solicitudes y documentos internos, con énfasis en el flujo de revisión y firma digital de documentos oficiales mediante criptografía asimétrica (RSA).
+
+El propósito central es reemplazar procesos manuales y en papel por un flujo digital controlado, trazable y seguro, que garantice que cada documento pase por las etapas de revisión y aprobación correctas antes de ser finalizado.
+
+\section{Alcance}
+
+El sistema abarca las siguientes funcionalidades principales:
+
+\begin{itemize}
+  \item \textbf{Autenticación y control de acceso} por roles (admin, coordinador, operador, consulta).
+  \item \textbf{Gestión de usuarios}: creación, edición, activación/desactivación y asignación de coordinador.
+  \item \textbf{Registro de migrantes}: captura de datos personales, migratorios y de atención.
+  \item \textbf{Gestor de documentos}: carga, flujo por etapas (V→O→C→A), firma digital RSA y verificación de integridad.
+  \item \textbf{Solicitudes push}: flujo de aprobación delegado entre usuarios y coordinadores.
+  \item \textbf{Generación de llaves RSA} para coordinadores, con clave privada cifrada por contraseña.
+\end{itemize}
+
+El sistema \textbf{no incluye}: módulo de reportes estadísticos avanzados, integración con sistemas externos de migración ni notificaciones por correo electrónico.
+
+\section{Casos de uso principales}
+
+\begin{table}[H]
+\centering
+\caption{Casos de uso principales del sistema}
+\label{tab:casos-uso}
+\begin{tabular}{p{0.25\textwidth} p{0.20\textwidth} p{0.42\textwidth}}
+\toprule
+\textbf{Caso de uso} & \textbf{Rol principal} & \textbf{Descripción} \\
+\midrule
+Iniciar sesión & Todos & Autenticación con email y contraseña. Validación de estado y vigencia. \\
+Gestionar usuarios & Admin & Crear, editar, activar/desactivar usuarios y asignar coordinadores. \\
+Registrar migrante & Admin, coordinador, operador & Capturar datos completos de un migrante atendido. \\
+Subir documento & Consulta, otros & Registrar un documento en el sistema e iniciar el flujo documental. \\
+Aprobar documento (V→O) & Operador, admin & Avanzar documento desde Ventanilla hacia revisión operativa. \\
+Firmar documento (O→C) & Coordinador & Firmar digitalmente con clave privada RSA y contraseña. \\
+Inserción final (C→A) & Admin & Cerrar el flujo documental una vez completadas todas las firmas. \\
+Verificar firma & Todos & Comprobar la autenticidad e integridad de la firma digital. \\
+Generar llaves RSA & Admin, coordinador & Generar par de llaves RSA para el coordinador, cifrado con contraseña. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 2 — ARQUITECTURA DEL SISTEMA
+%% ============================================================
+\chapter{Arquitectura del Sistema}
+
+\section{Tipo de arquitectura}
+
+El sistema sigue una arquitectura de \textbf{cliente-servidor desacoplada}, donde el frontend y el backend son procesos independientes que se comunican mediante HTTP/JSON:
+
+\begin{itemize}
+  \item \textbf{Frontend}: aplicación de página única (SPA) construida con React y servida por Vite.
+  \item \textbf{Backend}: conjunto de endpoints PHP independientes, ejecutados por Apache (XAMPP).
+  \item \textbf{Base de datos}: MySQL/MariaDB gestionada por XAMPP.
+  \item \textbf{Proxy de desarrollo}: Vite redirige las llamadas a \texttt{/api/*} hacia Apache en el puerto 80.
+\end{itemize}
+
+\section{Diagrama general}
+
+\begin{figure}[H]
+\centering
+\begin{Verbatim}[frame=single,rulecolor=\color{gray!40},fontsize=\small]
+  Navegador (puerto 5173)
+         |
+         | HTTP (React fetch /api/*)
+         v
+  Vite Dev Server (proxy)
+         |
+         | Redirige a http://localhost/casa-monarca-frontend/api/
+         v
+  Apache (puerto 80)  ---->  PHP (api/*.php)
+                                    |
+                                    | mysqli
+                                    v
+                             MySQL (puerto 3306)
+                             base: casa_monarca
+\end{Verbatim}
+\caption{Diagrama de arquitectura del sistema}
+\label{fig:arquitectura}
+\end{figure}
+
+\section{Componentes principales}
+
+\begin{table}[H]
+\centering
+\caption{Componentes principales del sistema}
+\label{tab:componentes}
+\begin{tabular}{p{0.25\textwidth} p{0.60\textwidth}}
+\toprule
+\textbf{Componente} & \textbf{Responsabilidad} \\
+\midrule
+\texttt{src/App.jsx} & Configuración de rutas con React Router. Define qué páginas requieren autenticación y qué roles pueden acceder. \\
+\texttt{ProtectedRoute.jsx} & Guard de ruta. Valida sesión contra el backend antes de renderizar la página protegida. \\
+\texttt{pages/Login.jsx} & Pantalla de inicio de sesión. Llama a \texttt{/api/login.php}. \\
+\texttt{pages/Dashboard.jsx} & Menú principal. Muestra las opciones disponibles según el rol del usuario. \\
+\texttt{pages/AdminPanel.jsx} & Gestión de usuarios y generación de llaves RSA para coordinadores. \\
+\texttt{pages/GestorDocumentos.jsx} & Módulo central. Subida, consulta, aprobación, firma y verificación de documentos. \\
+\texttt{pages/Migrantes.jsx} & Consulta y búsqueda del registro de migrantes. \\
+\texttt{pages/CrearMigrante.jsx} & Formulario de registro de nuevo migrante. \\
+\texttt{pages/SolicitudesPush.jsx} & Flujo de solicitudes delegadas entre usuarios y coordinadores. \\
+\texttt{api/*.php} & Endpoints del backend. Cada archivo corresponde a una operación del sistema. \\
+\texttt{conexion.php} & Configura la conexión a MySQL mediante \texttt{mysqli}. \\
+\texttt{database.sql} & Schema completo de la base de datos con datos iniciales de prueba. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 3 — STACK TECNOLÓGICO
+%% ============================================================
+\chapter{Stack Tecnológico}
+
+\section{Lenguajes}
+
+\begin{table}[H]
+\centering
+\caption{Lenguajes de programación utilizados}
+\label{tab:lenguajes}
+\begin{tabular}{p{0.20\textwidth} p{0.65\textwidth}}
+\toprule
+\textbf{Lenguaje} & \textbf{Uso} \\
+\midrule
+JavaScript (ES2022+) & Lógica del frontend. Componentes React, manejo de estado, llamadas fetch. \\
+JSX & Sintaxis de plantillas de React, compilada por Vite + Babel. \\
+PHP 7.4+ & Backend: endpoints de API, autenticación, firma digital (extensión OpenSSL). \\
+SQL (MySQL) & Definición del esquema de base de datos y consultas con prepared statements. \\
+CSS & Estilos globales y específicos de módulo. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Frameworks y herramientas principales}
+
+\begin{table}[H]
+\centering
+\caption{Frameworks y herramientas del proyecto}
+\label{tab:frameworks}
+\begin{tabular}{p{0.25\textwidth} p{0.15\textwidth} p{0.47\textwidth}}
+\toprule
+\textbf{Tecnología} & \textbf{Versión} & \textbf{Uso} \\
+\midrule
+React & 19.2.4 & Librería de UI para construir la SPA. \\
+React Router DOM & 7.14.1 & Navegación entre páginas y guards de ruta. \\
+Vite & 8.0.4 & Servidor de desarrollo y empaquetador de producción. \\
+Bootstrap & 5.3.8 & Sistema de grilla y componentes UI (botones, tablas, modales). \\
+XAMPP & Cualquier & Entorno local: Apache + MySQL + PHP integrados. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Bibliotecas y dependencias}
+
+\begin{table}[H]
+\centering
+\caption{Dependencias del proyecto (package.json)}
+\label{tab:dependencias}
+\begin{tabular}{p{0.35\textwidth} p{0.20\textwidth} p{0.30\textwidth}}
+\toprule
+\textbf{Paquete} & \textbf{Tipo} & \textbf{Uso} \\
+\midrule
+\texttt{react} & Producción & Núcleo de React. \\
+\texttt{react-dom} & Producción & Renderizado en el DOM. \\
+\texttt{react-router-dom} & Producción & Enrutamiento del SPA. \\
+\texttt{bootstrap} & Producción & Estilos y componentes UI. \\
+\texttt{@vitejs/plugin-react} & Desarrollo & Plugin de Vite para JSX y Fast Refresh. \\
+\texttt{eslint} & Desarrollo & Análisis estático del código. \\
+\texttt{eslint-plugin-react-hooks} & Desarrollo & Reglas de hooks de React. \\
+\texttt{@types/react} & Desarrollo & Tipos TypeScript para autocompletado. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 4 — ESTRUCTURA DEL PROYECTO
+%% ============================================================
+\chapter{Estructura del Proyecto}
+
+\section{Organización de carpetas}
+
+\begin{figure}[H]
+\centering
+\begin{Verbatim}[frame=single,rulecolor=\color{gray!40},fontsize=\small]
+MA2006B/
++-- casa-monarca-frontend/       # Raiz del proyecto web
+|   +-- api/                     # Backend: endpoints PHP (23 archivos)
+|   +-- src/                     # Frontend React
+|   |   +-- pages/               # Paginas de la aplicacion (12 archivos)
+|   |   +-- components/          # Componentes reutilizables
+|   |   |   +-- ProtectedRoute.jsx
+|   |   +-- App.jsx              # Configuracion de rutas
+|   |   +-- main.jsx             # Punto de entrada React
+|   |   +-- App.css              # Estilos globales
+|   |   +-- index.css            # Variables CSS base
+|   +-- public/                  # Assets estaticos
+|   +-- uploads/                 # Archivos subidos (generados en ejecucion)
+|   |   +-- documentos/          # Documentos del gestor
+|   +-- conexion.php             # Configuracion de conexion a MySQL
+|   +-- index.html               # Punto de entrada HTML
+|   +-- vite.config.js           # Configuracion de Vite y proxy
+|   +-- package.json             # Dependencias de Node.js
++-- database.sql                 # Esquema completo de la base de datos
++-- manual_usuario/              # Documentacion: manual de usuario
++-- documentacion/               # Documentacion: manual de desarrollo
++-- README.md                    # Guia rapida de instalacion
+\end{Verbatim}
+\caption{Estructura de carpetas del proyecto}
+\label{fig:estructura}
+\end{figure}
+
+\section{Descripción de módulos}
+
+\subsection{Módulo \texttt{api/} — Backend PHP}
+
+Cada archivo en \texttt{api/} corresponde a un endpoint independiente del sistema. Todos comparten el mismo patrón: leen JSON de \texttt{php://input}, validan datos, consultan la base de datos con prepared statements y devuelven JSON.
+
+\begin{table}[H]
+\centering
+\caption{Endpoints del backend PHP}
+\label{tab:endpoints}
+\begin{tabular}{p{0.38\textwidth} p{0.18\textwidth} p{0.31\textwidth}}
+\toprule
+\textbf{Archivo} & \textbf{Método} & \textbf{Función} \\
+\midrule
+\texttt{login.php} & POST & Autenticar usuario. \\
+\texttt{validar\_sesion.php} & POST & Verificar que la sesión sigue activa. \\
+\texttt{usuarios.php} & GET & Listar usuarios del sistema. \\
+\texttt{crear\_usuario.php} & POST & Crear nuevo usuario con rol asignado. \\
+\texttt{editar\_usuario.php} & POST & Editar datos de un usuario existente. \\
+\texttt{eliminar\_usuario.php} & POST & Desactivar un usuario. \\
+\texttt{coordinadores.php} & GET & Listar usuarios con rol coordinador. \\
+\texttt{migrantes.php} & GET & Listar migrantes registrados. \\
+\texttt{crear\_migrante\_directo.php} & POST & Registrar un nuevo migrante. \\
+\texttt{documentos.php} & GET & Listar documentos según rol/coordinador. \\
+\texttt{crear\_documento.php} & POST & Subir un documento e iniciarlo en etapa V. \\
+\texttt{avanzar\_documento.php} & POST & Aprobar o hacer inserción final de documento. \\
+\texttt{rechazar\_documento.php} & POST & Rechazar un documento del flujo. \\
+\texttt{eliminar\_documento.php} & POST & Eliminar un documento del sistema. \\
+\texttt{firmar\_documento.php} & POST & Firmar digitalmente con clave privada RSA. \\
+\texttt{verificar\_firma\_documento.php} & POST & Verificar la firma digital de un documento. \\
+\texttt{generar\_llaves\_coordinador.php} & POST & Generar par de llaves RSA para coordinador. \\
+\texttt{verificar\_coordinador.php} & POST & Verificar identidad del coordinador al iniciar sesión. \\
+\texttt{solicitudes\_push.php} & GET & Listar solicitudes push. \\
+\texttt{crear\_solicitud\_push.php} & POST & Crear una solicitud push. \\
+\texttt{aprobar\_solicitud\_push.php} & POST & Aprobar una solicitud push. \\
+\texttt{rechazar\_solicitud\_push.php} & POST & Rechazar una solicitud push. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Módulo \texttt{src/pages/} — Páginas React}
+
+\begin{table}[H]
+\centering
+\caption{Páginas del frontend React}
+\label{tab:paginas}
+\begin{tabular}{p{0.35\textwidth} p{0.52\textwidth}}
+\toprule
+\textbf{Archivo} & \textbf{Función} \\
+\midrule
+\texttt{Login.jsx} & Formulario de inicio de sesión. \\
+\texttt{Dashboard.jsx} & Menú principal con accesos según rol. \\
+\texttt{AdminPanel.jsx} & Lista de usuarios, generación de llaves RSA. \\
+\texttt{CrearUsuario.jsx} & Formulario de alta de usuario. \\
+\texttt{EditarUsuario.jsx} & Formulario de edición de usuario. \\
+\texttt{GestorDocumentos.jsx} & Módulo completo del gestor de documentos. \\
+\texttt{Migrantes.jsx} & Tabla de migrantes con búsqueda y filtros. \\
+\texttt{CrearMigrante.jsx} & Formulario de registro de migrante. \\
+\texttt{SolicitudesPush.jsx} & Módulo de solicitudes delegadas. \\
+\texttt{VerificacionCoordinador.jsx} & Pantalla de verificación de identidad del coordinador. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 5 — CONFIGURACIÓN DEL ENTORNO
+%% ============================================================
+\chapter{Configuración del Entorno}
+
+\section{Requisitos de versiones}
+
+\begin{table}[H]
+\centering
+\caption{Requisitos de software por componente}
+\label{tab:requisitos}
+\begin{tabular}{p{0.25\textwidth} p{0.25\textwidth} p{0.37\textwidth}}
+\toprule
+\textbf{Software} & \textbf{Versión mínima} & \textbf{Dónde obtenerlo} \\
+\midrule
+Node.js & v20.19 o v22.12+ & \url{https://nodejs.org} \\
+npm & Incluido con Node.js & -- \\
+XAMPP & Cualquier versión estable & \url{https://www.apachefriends.org} \\
+Apache & 2.4+ (incluido en XAMPP) & -- \\
+PHP & 7.4+ (incluido en XAMPP) & -- \\
+MySQL/MariaDB & 5.7+ (incluido en XAMPP) & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Variables de entorno}
+
+El proyecto \textbf{no utiliza archivos \texttt{.env}} en la versión actual. La configuración de la conexión a la base de datos se realiza directamente en \texttt{conexion.php}:
+
+\begin{lstlisting}[style=phpstyle, caption={Archivo conexion.php — variables de configuración}]
+<?php
+$host       = "localhost";
+$usuario    = "CAMBIAR_USUARIO";     // usuario de MySQL
+$password   = "CAMBIAR_CONTRASENA"; // contrasena de MySQL
+$base_datos = "casa_monarca";
+
+$conexion = new mysqli($host, $usuario, $password, $base_datos);
+$conexion->set_charset("utf8");
+?>
+\end{lstlisting}
+
+\textbf{Importante:} nunca almacenar credenciales reales en el repositorio. Configurar este archivo de forma local antes de ejecutar o desplegar el sistema.
+
+\section{Archivos de configuración}
+
+\begin{table}[H]
+\centering
+\caption{Archivos de configuración del proyecto}
+\label{tab:config}
+\begin{tabular}{p{0.30\textwidth} p{0.57\textwidth}}
+\toprule
+\textbf{Archivo} & \textbf{Propósito} \\
+\midrule
+\texttt{conexion.php} & Credenciales de MySQL. Debe editarse por entorno. \\
+\texttt{vite.config.js} & Proxy de desarrollo: redirige \texttt{/api/*} a Apache en \texttt{http://localhost}. \\
+\texttt{package.json} & Dependencias y scripts npm del proyecto. \\
+\texttt{eslint.config.js} & Reglas de análisis estático del código. \\
+\texttt{database.sql} & Schema completo. Ejecutar una vez por entorno para crear la base de datos. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El proxy en \texttt{vite.config.js} funciona únicamente durante el desarrollo con \texttt{npm run dev}. En producción, el frontend y el backend deben estar en el mismo servidor Apache o configurar CORS manualmente.
+
+%% ============================================================
+%% CAPÍTULO 6 — INSTALACIÓN Y EJECUCIÓN
+%% ============================================================
+\chapter{Instalación y Ejecución}
+
+\section{Pasos para levantar el sistema}
+
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{Instalar XAMPP} y verificar que Apache y MySQL puedan iniciarse correctamente.
+
+  \item \textbf{Clonar o copiar el proyecto} en el directorio raíz de XAMPP:
+  \begin{lstlisting}[style=bashstyle]
+C:\xampp\htdocs\casa-monarca-frontend\
+  \end{lstlisting}
+  Esto es necesario para que Apache sirva los archivos PHP desde la ruta correcta.
+
+  \item \textbf{Iniciar Apache y MySQL} desde el panel de control de XAMPP. Ambos deben aparecer en verde.
+
+  \item \textbf{Crear la base de datos} abriendo \texttt{http://localhost/phpmyadmin}, ir a la pestaña \textbf{SQL}, pegar el contenido de \texttt{database.sql} y ejecutar.
+
+  \item \textbf{Configurar la conexión} editando \texttt{casa-monarca-frontend/conexion.php} con las credenciales de MySQL del entorno local.
+
+  \item \textbf{Instalar dependencias de Node.js} dentro de la carpeta \texttt{casa-monarca-frontend}:
+  \begin{lstlisting}[style=bashstyle]
+npm ci
+  \end{lstlisting}
+  El comando \texttt{npm ci} utiliza \texttt{package-lock.json} para instalar versiones exactas y garantizar reproducibilidad.
+
+  \item \textbf{Iniciar el servidor de desarrollo}:
+  \begin{lstlisting}[style=bashstyle]
+npm run dev
+  \end{lstlisting}
+  Vite levanta el frontend en \texttt{http://localhost:5173}.
+
+  \item \textbf{Verificar el sistema} accediendo a \texttt{http://localhost:5173} e iniciando sesión con las credenciales del usuario de prueba:
+  \begin{itemize}
+    \item Email: \texttt{admin@demo.com}
+    \item Contraseña: \texttt{casa\_monarca\_pass}
+  \end{itemize}
+\end{enumerate}
+
+\section{Comandos principales}
+
+\begin{table}[H]
+\centering
+\caption{Comandos npm disponibles}
+\label{tab:comandos}
+\begin{tabular}{p{0.30\textwidth} p{0.57\textwidth}}
+\toprule
+\textbf{Comando} & \textbf{Descripción} \\
+\midrule
+\texttt{npm ci} & Instala dependencias exactas desde \texttt{package-lock.json}. \\
+\texttt{npm run dev} & Inicia servidor de desarrollo en el puerto 5173 con proxy a Apache. \\
+\texttt{npm run build} & Genera el bundle de producción en la carpeta \texttt{dist/}. \\
+\texttt{npm run preview} & Sirve el build de producción localmente para validación. \\
+\texttt{npm run lint} & Ejecuta ESLint sobre todo el código fuente. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 7 — BASE DE DATOS
+%% ============================================================
+\chapter{Base de Datos}
+
+\section{Descripción general}
+
+La base de datos se llama \texttt{casa\_monarca} y está gestionada con MySQL/MariaDB. Se define completamente en el archivo \texttt{database.sql} ubicado en la raíz del proyecto. Contiene 5 tablas relacionales que cubren usuarios, migrantes, documentos, historial de cambios, firmas y solicitudes.
+
+\section{Tablas principales}
+
+\subsection{Tabla \texttt{usuarios}}
+
+Almacena todos los usuarios del sistema con sus credenciales, rol, estado y llaves criptográficas para los coordinadores.
+
+\begin{lstlisting}[style=sqlstyle, caption={Definición de la tabla usuarios}]
+CREATE TABLE IF NOT EXISTS usuarios (
+    id                    INT AUTO_INCREMENT PRIMARY KEY,
+    nombre                VARCHAR(255) NOT NULL,
+    email                 VARCHAR(255) NOT NULL UNIQUE,
+    password              VARCHAR(255) NOT NULL,  -- bcrypt hash
+    rol                   VARCHAR(50)  NOT NULL,   -- admin|coordinador|operador|consulta
+    estado                VARCHAR(50)  DEFAULT 'activo',
+    fecha_vigencia        DATE         NULL,
+    certificado_codigo    VARCHAR(100) NULL,
+    clave_coordinador     VARCHAR(100) NULL,
+    coordinador_id        INT          NULL,        -- FK logica a usuarios
+    clave_publica         TEXT         NULL,        -- PEM RSA publica
+    clave_privada_cifrada TEXT         NULL         -- PEM RSA cifrada con contrasena
+);
+\end{lstlisting}
+
+\subsection{Tabla \texttt{migrantes}}
+
+Almacena la información de cada migrante atendido por Casa Monarca.
+
+\begin{lstlisting}[style=sqlstyle, caption={Definición de la tabla migrantes}]
+CREATE TABLE IF NOT EXISTS migrantes (
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    nombre              VARCHAR(255) NOT NULL,
+    apellido_paterno    VARCHAR(255) NULL,
+    apellido_materno    VARCHAR(255) NULL,
+    fecha_nacimiento    DATE         NULL,
+    edad                INT          NULL,
+    sexo                VARCHAR(50)  DEFAULT 'no_especificado',
+    nacionalidad        VARCHAR(100) NULL,
+    telefono            VARCHAR(50)  NULL,
+    email               VARCHAR(255) NULL,
+    pais_origen         VARCHAR(100) NULL,
+    pais_destino        VARCHAR(100) NULL,
+    estatus_migratorio  VARCHAR(100) NULL,
+    motivo_atencion     TEXT         NULL,
+    observaciones       TEXT         NULL,
+    creado_por          INT          NULL,   -- FK a usuarios.id
+    solicitud_id        INT          NULL,
+    creado_en           TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+);
+\end{lstlisting}
+
+\subsection{Tabla \texttt{documentos}}
+
+Registra cada documento del sistema con su etapa actual, archivo físico, hash de integridad y datos de firma.
+
+\begin{lstlisting}[style=sqlstyle, caption={Definición de la tabla documentos}]
+CREATE TABLE IF NOT EXISTS documentos (
+    id                INT AUTO_INCREMENT PRIMARY KEY,
+    titulo            VARCHAR(255) NOT NULL,
+    descripcion       TEXT         NULL,
+    archivo_nombre    VARCHAR(255) NULL,
+    archivo_ruta      VARCHAR(500) NULL,
+    etapa             VARCHAR(10)  DEFAULT 'V', -- V|O|C|A
+    coordinador_id    INT          NULL,         -- FK a usuarios.id
+    creado_por        INT          NULL,         -- FK a usuarios.id
+    hash_archivo      VARCHAR(64)  NULL,         -- SHA-256 del archivo
+    estado_documento  VARCHAR(50)  DEFAULT 'activo',
+    firma_coordinador TEXT         NULL,         -- firma RSA en Base64
+    folio_firma       VARCHAR(100) NULL,
+    accion_firma      VARCHAR(255) NULL,
+    firmado_por       INT          NULL,         -- FK a usuarios.id
+    fecha_firma       DATETIME     NULL
+);
+\end{lstlisting}
+
+\subsection{Tabla \texttt{documentos\_historial}}
+
+Registra cada cambio de etapa de un documento, con el usuario responsable y un comentario.
+
+\subsection{Tabla \texttt{documentos\_firmas}}
+
+Gestiona las firmas múltiples por documento. Permite que un coordinador solicite firmas adicionales de otros coordinadores antes de la inserción final.
+
+\begin{lstlisting}[style=sqlstyle, caption={Definición de documentos\_firmas}]
+CREATE TABLE IF NOT EXISTS documentos_firmas (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    documento_id   INT         NOT NULL,
+    coordinador_id INT         NOT NULL,
+    solicitado_por INT         NULL,
+    estado         VARCHAR(50) DEFAULT 'pendiente', -- pendiente|firmado
+    hash_archivo   VARCHAR(64) NULL,
+    firma          TEXT        NULL,
+    folio_firma    VARCHAR(100) NULL,
+    fecha_firma    DATETIME    NULL,
+    UNIQUE KEY unique_doc_coord (documento_id, coordinador_id)
+);
+\end{lstlisting}
+
+\subsection{Tabla \texttt{solicitudes\_push}}
+
+Gestiona solicitudes de acción delegadas entre usuarios y coordinadores (datos en formato JSON).
+
+\section{Relaciones entre tablas}
+
+\begin{table}[H]
+\centering
+\caption{Relaciones entre tablas de la base de datos}
+\label{tab:relaciones}
+\begin{tabular}{p{0.28\textwidth} p{0.28\textwidth} p{0.30\textwidth}}
+\toprule
+\textbf{Tabla origen} & \textbf{Tabla destino} & \textbf{Relación} \\
+\midrule
+\texttt{usuarios.coordinador\_id} & \texttt{usuarios.id} & Operador → su Coordinador \\
+\texttt{documentos.creado\_por} & \texttt{usuarios.id} & Documento → creador \\
+\texttt{documentos.coordinador\_id} & \texttt{usuarios.id} & Documento → coordinador asignado \\
+\texttt{documentos.firmado\_por} & \texttt{usuarios.id} & Documento → quién firmó \\
+\texttt{documentos\_historial.documento\_id} & \texttt{documentos.id} & Historial → documento \\
+\texttt{documentos\_historial.usuario\_id} & \texttt{usuarios.id} & Historial → usuario \\
+\texttt{documentos\_firmas.documento\_id} & \texttt{documentos.id} & Firma múltiple → documento \\
+\texttt{documentos\_firmas.coordinador\_id} & \texttt{usuarios.id} & Firma múltiple → coordinador \\
+\texttt{migrantes.creado\_por} & \texttt{usuarios.id} & Migrante → usuario registrador \\
+\texttt{solicitudes\_push.usuario\_id} & \texttt{usuarios.id} & Solicitud → usuario \\
+\texttt{solicitudes\_push.coordinador\_id} & \texttt{usuarios.id} & Solicitud → coordinador \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 8 — API / INTERFACES
+%% ============================================================
+\chapter{API / Interfaces}
+
+\section{Convención general}
+
+Todos los endpoints siguen la misma convención:
+
+\begin{itemize}
+  \item \textbf{URL base}: \texttt{/api/<nombre\_endpoint>.php}
+  \item \textbf{Content-Type}: \texttt{application/json}
+  \item \textbf{Autenticación}: el \texttt{usuario\_id} se envía en el cuerpo de la petición (sin JWT; la sesión se valida mediante \texttt{validar\_sesion.php}).
+  \item \textbf{Respuesta exitosa}: \texttt{\{"success": true, ...\}}
+  \item \textbf{Respuesta de error}: \texttt{\{"success": false, "mensaje": "Descripción del error"\}}
+\end{itemize}
+
+\section{Endpoints principales}
+
+\subsection{POST /api/login.php}
+
+Autentica un usuario con email y contraseña.
+
+\begin{table}[H]
+\centering
+\caption{Parámetros de login.php}
+\label{tab:api-login}
+\begin{tabular}{p{0.20\textwidth} p{0.12\textwidth} p{0.53\textwidth}}
+\toprule
+\textbf{Parámetro} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+\texttt{email} & string & Correo electrónico del usuario. \\
+\texttt{password} & string & Contraseña en texto plano (comparada contra bcrypt). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Respuesta exitosa:
+\begin{lstlisting}[style=bashstyle]
+{
+  "success": true,
+  "mensaje": "Login correcto",
+  "usuario": {
+    "id": 1, "nombre": "Administrador",
+    "email": "admin@demo.com", "rol": "admin",
+    "estado": "activo", "fecha_vigencia": "2027-12-31"
+  }
+}
+\end{lstlisting}
+
+\subsection{POST /api/avanzar\_documento.php}
+
+Avanza un documento de una etapa a la siguiente (V→O o C→A).
+
+\begin{table}[H]
+\centering
+\caption{Parámetros de avanzar\_documento.php}
+\label{tab:api-avanzar}
+\begin{tabular}{p{0.23\textwidth} p{0.12\textwidth} p{0.50\textwidth}}
+\toprule
+\textbf{Parámetro} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+\texttt{documento\_id} & int & ID del documento a avanzar. \\
+\texttt{usuario\_id} & int & ID del usuario que realiza la acción. \\
+\texttt{comentario} & string & Comentario opcional para el historial. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{POST /api/firmar\_documento.php}
+
+Firma digitalmente un documento usando la clave privada RSA del coordinador.
+
+\begin{table}[H]
+\centering
+\caption{Parámetros de firmar\_documento.php}
+\label{tab:api-firmar}
+\begin{tabular}{p{0.30\textwidth} p{0.12\textwidth} p{0.44\textwidth}}
+\toprule
+\textbf{Parámetro} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+\texttt{documento\_id} & int & ID del documento a firmar. \\
+\texttt{usuario\_id} & int & ID del coordinador firmante. \\
+\texttt{password\_firma} & string & Contraseña para descifrar la clave privada RSA. \\
+\texttt{coordinadores\_adicionales} & array & IDs de coordinadores adicionales (opcional). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Respuesta exitosa:
+\begin{lstlisting}[style=bashstyle]
+{
+  "success": true,
+  "mensaje": "Documento firmado correctamente",
+  "etapa": "C",
+  "folio_firma": "FIR-20260430-120001-DOC3-USR2",
+  "coordinadores_adicionales": []
+}
+\end{lstlisting}
+
+\subsection{POST /api/generar\_llaves\_coordinador.php}
+
+Genera un par de llaves RSA 2048 bits para un coordinador y almacena la clave privada cifrada con contraseña.
+
+\begin{table}[H]
+\centering
+\caption{Parámetros de generar\_llaves\_coordinador.php}
+\label{tab:api-llaves}
+\begin{tabular}{p{0.28\textwidth} p{0.12\textwidth} p{0.46\textwidth}}
+\toprule
+\textbf{Parámetro} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+\texttt{solicitante\_id} & int & ID del usuario que solicita la generación (admin o el propio coordinador). \\
+\texttt{coordinador\_id} & int & ID del coordinador para quien se generan las llaves. \\
+\texttt{password\_firma} & string & Contraseña de cifrado de la clave privada (mínimo 6 caracteres). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 9 — FLUJOS Y LÓGICA DE NEGOCIO
+%% ============================================================
+\chapter{Flujos y Lógica de Negocio}
+
+\section{Flujo documental VOCA}
+
+El proceso central del sistema es el flujo de aprobación de documentos, conocido como \textbf{VOCA}:
+
+\begin{figure}[H]
+\centering
+\begin{Verbatim}[frame=single,rulecolor=\color{gray!40},fontsize=\small]
+  [V - Ventanilla]
+    Documento creado/recibido
+    Acción: Operador o Admin aprueba
+          |
+          v
+  [O - Operador / Verificacion]
+    Documento en revision operativa
+    Acción: Coordinador firma con clave privada RSA
+          |
+          v
+  [C - Coordinador / Firma]
+    Documento firmado digitalmente
+    Acción: Admin realiza insercion final
+          |
+          v
+  [A - Insercion final]
+    Documento finalizado. Proceso completado.
+\end{Verbatim}
+\caption{Flujo documental VOCA}
+\label{fig:flujo-voca}
+\end{figure}
+
+En cualquier etapa, un documento puede ser \textbf{rechazado}, lo que cambia su \texttt{estado\_documento} a \texttt{rechazado} y bloquea cualquier acción posterior sobre él.
+
+\section{Reglas de negocio importantes}
+
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{Control por rol}: cada etapa del flujo solo puede ser ejecutada por el rol autorizado. Un coordinador no puede aprobar en Ventanilla (eso lo hace el operador o admin). Un operador no puede hacer inserción final.
+  \item \textbf{Control por coordinación}: los operadores y usuarios de consulta solo ven y actúan sobre documentos cuyo \texttt{coordinador\_id} coincide con su propio \texttt{coordinador\_id}.
+  \item \textbf{Integridad del archivo}: al firmar, el sistema calcula el hash SHA-256 del archivo físico y lo firma con OpenSSL. La verificación posterior compara el hash actual del archivo con la firma almacenada, detectando cualquier modificación.
+  \item \textbf{Firmas múltiples}: el coordinador principal puede solicitar firmas adicionales de otros coordinadores. El documento solo puede avanzar a Inserción final cuando todas las firmas solicitadas estén en estado \texttt{firmado}.
+  \item \textbf{Vigencia del usuario}: al iniciar sesión, el sistema verifica que la \texttt{fecha\_vigencia} del usuario no haya expirado. Si expiró, el acceso es denegado.
+  \item \textbf{Estado del usuario}: solo usuarios en estado \texttt{activo} pueden iniciar sesión.
+\end{enumerate}
+
+\section{Proceso de firma digital RSA}
+
+\begin{enumerate}[label=\arabic*.]
+  \item Al crear un coordinador, el admin (o el propio coordinador) ejecuta \texttt{generar\_llaves\_coordinador.php}. Se genera un par RSA 2048 bits con OpenSSL.
+  \item La clave pública se almacena en texto PEM en \texttt{usuarios.clave\_publica}.
+  \item La clave privada se cifra con la contraseña elegida y se almacena en \texttt{usuarios.clave\_privada\_cifrada}.
+  \item Al firmar un documento, \texttt{firmar\_documento.php}: calcula SHA-256 del archivo, descifra la clave privada con la contraseña, firma el hash con \texttt{openssl\_sign} y almacena la firma en Base64 + folio único.
+  \item La verificación (\texttt{verificar\_firma\_documento.php}) recalcula el hash del archivo y lo verifica contra la firma almacenada usando la clave pública.
+\end{enumerate}
+
+%% ============================================================
+%% CAPÍTULO 10 — MANEJO DE ERRORES
+%% ============================================================
+\chapter{Manejo de Errores}
+
+\section{Estrategia de errores}
+
+El backend siempre devuelve una respuesta JSON estructurada, nunca HTML de error de PHP. Esto se garantiza con:
+
+\begin{itemize}
+  \item \texttt{ob\_start()} al inicio de cada endpoint para capturar cualquier salida accidental.
+  \item \texttt{ob\_clean()} antes de cada \texttt{echo json\_encode()} para garantizar JSON puro.
+  \item \texttt{ini\_set("display\_errors", 0)} para no exponer stack traces a los clientes.
+\end{itemize}
+
+El frontend interpreta el campo \texttt{success} de cada respuesta. Si es \texttt{false}, muestra el \texttt{mensaje} al usuario mediante alertas de Bootstrap.
+
+\section{Mensajes de error comunes}
+
+\begin{table}[H]
+\centering
+\caption{Errores comunes del sistema y causa raíz}
+\label{tab:errores}
+\begin{tabular}{p{0.35\textwidth} p{0.51\textwidth}}
+\toprule
+\textbf{Mensaje} & \textbf{Causa y solución} \\
+\midrule
+\textit{Datos incompletos} & Faltan campos requeridos en la petición. Revisar el cuerpo del request. \\
+\textit{Usuario no encontrado} & Email o ID no existe en la base de datos. \\
+\textit{Contraseña incorrecta} & Hash bcrypt no coincide. Verificar datos de acceso. \\
+\textit{Usuario inactivo o revocado} & Campo \texttt{estado} distinto de \texttt{activo}. Activar desde AdminPanel. \\
+\textit{La vigencia ha expirado} & \texttt{fecha\_vigencia} anterior a la fecha actual. Actualizar desde AdminPanel. \\
+\textit{Contraseña de firma incorrecta} & La contraseña no descifra la clave privada RSA. \\
+\textit{El coordinador no tiene llaves} & No se han generado llaves RSA. Usar AdminPanel para generarlas. \\
+\textit{No se puede avanzar un documento rechazado} & El documento tiene \texttt{estado\_documento = rechazado}. No es recuperable. \\
+\textit{Hay firmas pendientes} & Existen coordinadores adicionales que aún no han firmado. \\
+\textit{Respuesta inválida del servidor} & Apache o PHP no está corriendo. Verificar XAMPP. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Registro (logs)}
+
+Los errores de PHP se registran en el log de Apache de XAMPP, ubicado normalmente en:
+\begin{lstlisting}[style=bashstyle]
+C:\xampp\apache\logs\error.log
+\end{lstlisting}
+El frontend registra errores de red y de parsing en la consola del navegador (herramientas de desarrollador).
+
+%% ============================================================
+%% CAPÍTULO 11 — PRUEBAS
+%% ============================================================
+\chapter{Pruebas}
+
+\section{Tipos de pruebas}
+
+En la versión 1.0 del sistema se realizaron exclusivamente \textbf{pruebas manuales funcionales} mediante la interfaz web. No se implementaron pruebas automatizadas unitarias ni de integración.
+
+\section{Casos de prueba manuales realizados}
+
+\begin{table}[H]
+\centering
+\caption{Casos de prueba funcionales manuales}
+\label{tab:pruebas}
+\begin{tabular}{p{0.35\textwidth} p{0.18\textwidth} p{0.33\textwidth}}
+\toprule
+\textbf{Caso} & \textbf{Resultado} & \textbf{Notas} \\
+\midrule
+Login con credenciales correctas & Aprobado & Redirige al dashboard. \\
+Login con contraseña incorrecta & Aprobado & Muestra mensaje de error. \\
+Login con usuario inactivo & Aprobado & Bloquea acceso. \\
+Crear usuario con email duplicado & Aprobado & Retorna error. \\
+Subir documento y verificar etapa V & Aprobado & Aparece en la tabla. \\
+Aprobar documento como operador (V→O) & Aprobado & Etapa cambia correctamente. \\
+Firmar documento como coordinador (O→C) & Aprobado & Folio generado. \\
+Intentar firmar con contraseña incorrecta & Aprobado & Retorna error. \\
+Inserción final como admin (C→A) & Aprobado & Documento finalizado. \\
+Verificar firma digital & Aprobado & Firma válida confirmada. \\
+Rechazar documento & Aprobado & Bloquea avance posterior. \\
+Generar llaves RSA para coordinador & Aprobado & Llaves almacenadas. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Cómo ejecutar ESLint}
+
+\begin{lstlisting}[style=bashstyle]
+cd casa-monarca-frontend
+npm run lint
+\end{lstlisting}
+
+\textbf{Estado conocido}: ESLint reporta actualmente 20 errores y 2 advertencias relacionados principalmente con variables no utilizadas y dependencias de hooks. Esta deuda técnica no impide compilar ni ejecutar el sistema, pero debe resolverse antes de implementar ESLint como validación obligatoria en el flujo de CI/CD.
+
+%% ============================================================
+%% CAPÍTULO 12 — DESPLIEGUE
+%% ============================================================
+\chapter{Despliegue}
+
+\section{Entornos}
+
+\begin{table}[H]
+\centering
+\caption{Entornos del sistema}
+\label{tab:entornos}
+\begin{tabular}{p{0.20\textwidth} p{0.65\textwidth}}
+\toprule
+\textbf{Entorno} & \textbf{Descripción} \\
+\midrule
+Desarrollo local & XAMPP + Vite dev server. Usar \texttt{npm run dev}. Proxy automático a Apache. \\
+Producción & Servidor Apache con PHP. El frontend debe compilarse con \texttt{npm run build} y los archivos de \texttt{dist/} servirse desde Apache. \\
+HostGator & Hosting compartido utilizado para el despliegue en producción del proyecto. Limitaciones indicadas en la sección siguiente. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pasos para despliegue en producción}
+
+\begin{enumerate}[label=\arabic*.]
+  \item Generar el bundle de producción del frontend:
+  \begin{lstlisting}[style=bashstyle]
+npm run build
+  \end{lstlisting}
+  Esto genera los archivos estáticos en la carpeta \texttt{dist/}.
+
+  \item Subir el contenido de \texttt{dist/} y la carpeta \texttt{api/} al servidor Apache de producción.
+
+  \item Configurar el archivo \texttt{conexion.php} con las credenciales de la base de datos de producción.
+
+  \item Ejecutar \texttt{database.sql} en el servidor MySQL de producción para crear el schema.
+
+  \item Verificar que la extensión \texttt{openssl} esté habilitada en PHP del servidor de producción (requerida para firma RSA).
+
+  \item Configurar los headers CORS en el servidor si el frontend y el backend están en dominios distintos.
+\end{enumerate}
+
+\section{Consideraciones y limitaciones conocidas (HostGator)}
+
+\begin{itemize}
+  \item \textbf{OpenSSL}: verificar que la extensión OpenSSL de PHP esté disponible y habilitada en el plan de hosting.
+  \item \textbf{Ruta de archivos}: la ruta de \texttt{uploads/documentos/} debe existir y tener permisos de escritura para el usuario de Apache.
+  \item \textbf{Sin acceso SSH en planes básicos}: las migraciones de base de datos deben realizarse desde phpMyAdmin del panel de control.
+  \item \textbf{Versión de PHP}: confirmar que el servidor use PHP 7.4 o superior.
+  \item \textbf{Sin variables de entorno del sistema}: las credenciales deben configurarse directamente en \texttt{conexion.php} (protegido del repositorio vía \texttt{.gitignore}).
+\end{itemize}
+
+%% ============================================================
+%% CAPÍTULO 13 — SEGURIDAD
+%% ============================================================
+\chapter{Seguridad}
+
+\section{Autenticación}
+
+\begin{itemize}
+  \item Las contraseñas se almacenan como hashes \textbf{bcrypt} con \texttt{password\_hash()} de PHP.
+  \item La verificación usa \texttt{password\_verify()}, nunca comparación directa.
+  \item Cada ruta protegida del frontend valida la sesión contra el backend mediante \texttt{validar\_sesion.php} antes de renderizar el contenido.
+  \item Los datos del usuario activo se almacenan en \texttt{localStorage} del navegador.
+\end{itemize}
+
+\section{Firma digital}
+
+\begin{itemize}
+  \item Las llaves RSA son de \textbf{2048 bits} generadas con OpenSSL.
+  \item La clave privada nunca viaja en texto claro: se almacena cifrada con la contraseña del coordinador.
+  \item El algoritmo de firma es \textbf{SHA-256 con RSA} (\texttt{OPENSSL\_ALGO\_SHA256}).
+  \item El hash SHA-256 del archivo se recalcula en cada verificación para detectar modificaciones posteriores a la firma.
+\end{itemize}
+
+\section{Protección de datos sensibles}
+
+\begin{itemize}
+  \item El archivo \texttt{conexion.php} está en \texttt{.gitignore} para evitar que las credenciales reales sean incluidas en el repositorio.
+  \item Las claves privadas cifradas se almacenan en la base de datos; solo se pueden usar con la contraseña correcta.
+  \item Los endpoints PHP usan \textbf{prepared statements} con \texttt{mysqli} para prevenir inyección SQL.
+  \item Los headers CORS están configurados con \texttt{Access-Control-Allow-Origin: *} en desarrollo; deben restringirse a dominios específicos en producción.
+\end{itemize}
+
+\section{Buenas prácticas implementadas}
+
+\begin{itemize}
+  \item \texttt{ob\_start()} / \texttt{ob\_clean()} para garantizar respuestas JSON puras.
+  \item \texttt{display\_errors = 0} en producción para no exponer información del servidor.
+  \item Validación de rol en cada endpoint del backend (no solo en el frontend).
+  \item Control de vigencia y estado del usuario en cada autenticación.
+\end{itemize}
+
+%% ============================================================
+%% CAPÍTULO 14 — GUÍA DE CONTRIBUCIÓN
+%% ============================================================
+\chapter{Guía de Contribución}
+
+\section{Convenciones de código}
+
+\subsection{Frontend (JavaScript/React)}
+
+\begin{itemize}
+  \item Nombrar archivos de componentes con \textbf{PascalCase}: \texttt{GestorDocumentos.jsx}.
+  \item Nombrar variables y funciones con \textbf{camelCase}: \texttt{handleSubmit}, \texttt{documentoId}.
+  \item Usar \textbf{functional components} con hooks; no usar class components.
+  \item Mantener la lógica de fetch dentro del componente que la necesita o en funciones auxiliares del mismo archivo.
+  \item Cada página nueva debe añadirse al enrutador en \texttt{App.jsx} con un \texttt{ProtectedRoute} que especifique los roles permitidos.
+\end{itemize}
+
+\subsection{Backend (PHP)}
+
+\begin{itemize}
+  \item Un archivo PHP por endpoint; el nombre debe describir la acción: \texttt{crear\_usuario.php}.
+  \item Usar siempre \textbf{prepared statements} con \texttt{mysqli}; nunca concatenar variables de usuario en SQL.
+  \item Iniciar siempre con \texttt{ob\_start()} y usar \texttt{ob\_clean()} antes de cada respuesta.
+  \item Toda respuesta debe ser JSON con el campo \texttt{success} (bool) y \texttt{mensaje} (string).
+\end{itemize}
+
+\section{Flujo de trabajo con Git}
+
+\begin{enumerate}[label=\arabic*.]
+  \item Crear una rama descriptiva desde \texttt{main}:
+  \begin{lstlisting}[style=bashstyle]
+git checkout -b feature/nombre-de-la-funcionalidad
+  \end{lstlisting}
+
+  \item Hacer commits con mensajes claros y en español:
+  \begin{lstlisting}[style=bashstyle]
+git commit -m "Agrega endpoint para rechazar solicitudes push"
+  \end{lstlisting}
+
+  \item Antes de hacer push, revisar que el código no rompe el build:
+  \begin{lstlisting}[style=bashstyle]
+npm run build
+  \end{lstlisting}
+
+  \item Abrir un Pull Request hacia \texttt{main} para revisión del equipo.
+
+  \item Nunca hacer push directo a \texttt{main} sin revisión.
+\end{enumerate}
+
+\section{Cómo agregar funcionalidades}
+
+Para agregar un nuevo módulo al sistema seguir estos pasos:
+
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{Backend}: crear el archivo \texttt{api/nombre\_accion.php} con la lógica del endpoint.
+  \item \textbf{Base de datos}: si se requiere nueva tabla, agregarla a \texttt{database.sql} con \texttt{CREATE TABLE IF NOT EXISTS}.
+  \item \textbf{Frontend}: crear la página en \texttt{src/pages/NombrePagina.jsx}.
+  \item \textbf{Ruta}: registrar la nueva ruta en \texttt{App.jsx} con \texttt{ProtectedRoute} y los roles correspondientes.
+  \item \textbf{Dashboard}: agregar el acceso visible en \texttt{Dashboard.jsx} para los roles autorizados.
+\end{enumerate}
+
+%% ============================================================
+%% CAPÍTULO 15 — PROBLEMAS CONOCIDOS
+%% ============================================================
+\chapter{Problemas Conocidos}
+
+\section{Limitaciones de la versión 1.0}
+
+\begin{table}[H]
+\centering
+\caption{Limitaciones conocidas del sistema}
+\label{tab:limitaciones}
+\begin{tabular}{p{0.40\textwidth} p{0.47\textwidth}}
+\toprule
+\textbf{Limitación} & \textbf{Descripción} \\
+\midrule
+Sin autenticación basada en tokens (JWT/session) & La sesión se almacena en \texttt{localStorage}. En un entorno de mayor seguridad se recomienda migrar a tokens HTTP-only. \\
+CORS abierto en desarrollo & \texttt{Access-Control-Allow-Origin: *} debe restringirse en producción. \\
+Sin notificaciones por correo & El sistema no envía emails al crear usuarios, asignar documentos ni al firmar. \\
+ESLint con deuda técnica & 20 errores y 2 advertencias pendientes de resolver. \\
+Ruta de OpenSSL fija en Windows & \texttt{generar\_llaves\_coordinador.php} tiene una ruta de configuración \texttt{openssl.cnf} para MAMP (Windows). En Linux/HostGator puede omitirse o ajustarse. \\
+Sin paginación en tablas grandes & Las tablas de documentos, migrantes y usuarios cargan todos los registros sin paginación. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+%% CAPÍTULO 16 — FAQ TÉCNICA
+%% ============================================================
+\chapter{FAQ Técnica}
+
+\textbf{¿Por qué el frontend no puede conectarse a la API?}
+
+Verificar que Apache esté corriendo en XAMPP (puerto 80) y que el proyecto esté ubicado en \texttt{htdocs/casa-monarca-frontend/}. Abrir directamente \texttt{http://localhost/casa-monarca-frontend/api/login.php} para confirmar que PHP responde.
+
+\textbf{¿Por qué aparece "Respuesta inválida del servidor" al hacer login?}
+
+PHP está devolviendo HTML de error en lugar de JSON. Revisar \texttt{conexion.php}: las credenciales de MySQL deben coincidir con la instalación local. Abrir \texttt{http://localhost/casa-monarca-frontend/conexion.php} para ver el mensaje de error real.
+
+\textbf{¿Por qué falla la generación de llaves RSA?}
+
+En entornos Windows con MAMP, la ruta del archivo \texttt{openssl.cnf} en \texttt{generar\_llaves\_coordinador.php} debe apuntar a la instalación correcta. En servidores Linux o HostGator, puede eliminarse la clave \texttt{"config"} del array \texttt{\$config} ya que OpenSSL la detecta automáticamente.
+
+\textbf{¿Por qué el operador no puede ver los documentos?}
+
+El operador solo ve documentos cuyo \texttt{coordinador\_id} coincide con su propio \texttt{coordinador\_id}. Verificar que el usuario operador tenga un coordinador asignado en AdminPanel.
+
+\textbf{¿Cómo resetear la contraseña de firma de un coordinador?}
+
+Generar nuevas llaves RSA para el coordinador desde AdminPanel usando una contraseña nueva. Las llaves anteriores quedarán reemplazadas y los documentos firmados con las llaves antiguas seguirán siendo verificables mientras la firma esté almacenada en la base de datos.
+
+\textbf{¿Por qué el puerto 3306 da error al iniciar XAMPP?}
+
+Otro servicio de MySQL está corriendo. En Windows: Administrador de tareas → pestaña Servicios → buscar "MySQL" → Detener. Luego reiniciar MySQL desde el panel de XAMPP.
+
+\textbf{¿Cómo generar el build de producción?}
+
+\begin{lstlisting}[style=bashstyle]
+cd casa-monarca-frontend
+npm run build
+\end{lstlisting}
+
+Los archivos generados en \texttt{dist/} son los que deben subirse al servidor de producción junto con la carpeta \texttt{api/} y el archivo \texttt{conexion.php} configurado.
+
+%% ============================================================
+%% CAPÍTULO 17 — REFERENCIAS
+%% ============================================================
+\chapter{Referencias}
+
+\begin{enumerate}[label={[\arabic*]}]
+  \item Documentación oficial de React. Disponible en: \url{https://react.dev}
+  \item Documentación oficial de React Router v7. Disponible en: \url{https://reactrouter.com}
+  \item Documentación oficial de Vite. Disponible en: \url{https://vite.dev}
+  \item Bootstrap 5 — Componentes y utilidades. Disponible en: \url{https://getbootstrap.com/docs/5.3}
+  \item PHP Manual — \texttt{openssl\_sign} y funciones de criptografía. Disponible en: \url{https://www.php.net/manual/es/book.openssl.php}
+  \item PHP Manual — \texttt{mysqli} y prepared statements. Disponible en: \url{https://www.php.net/manual/es/class.mysqli.php}
+  \item XAMPP — Entorno de desarrollo local. Disponible en: \url{https://www.apachefriends.org}
+  \item Node.js — Descargas oficiales. Disponible en: \url{https://nodejs.org}
+\end{enumerate}
+
+\end{document}

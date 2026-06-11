@@ -1,0 +1,37 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {1.1}{\ignorespaces Casos de uso principales del sistema}}{2}{table.caption.4}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Componentes principales del sistema}}{4}{table.caption.6}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Lenguajes de programación utilizados}}{5}{table.caption.7}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Frameworks y herramientas del proyecto}}{5}{table.caption.8}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Dependencias del proyecto (package.json)}}{6}{table.caption.9}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Endpoints del backend PHP}}{8}{table.caption.11}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Páginas del frontend React}}{8}{table.caption.12}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Requisitos de software por componente}}{9}{table.caption.13}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Archivos de configuración del proyecto}}{10}{table.caption.14}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces Comandos npm disponibles}}{12}{table.caption.15}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces Relaciones entre tablas de la base de datos}}{15}{table.caption.16}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {8.1}{\ignorespaces Parámetros de login.php}}{16}{table.caption.17}%
+\contentsline {table}{\numberline {8.2}{\ignorespaces Parámetros de avanzar\_documento.php}}{17}{table.caption.18}%
+\contentsline {table}{\numberline {8.3}{\ignorespaces Parámetros de firmar\_documento.php}}{17}{table.caption.19}%
+\contentsline {table}{\numberline {8.4}{\ignorespaces Parámetros de generar\_llaves\_coordinador.php}}{17}{table.caption.20}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {10.1}{\ignorespaces Errores comunes del sistema y causa raíz}}{20}{table.caption.22}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {11.1}{\ignorespaces Casos de prueba funcionales manuales}}{22}{table.caption.23}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {12.1}{\ignorespaces Entornos del sistema}}{24}{table.caption.24}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {15.1}{\ignorespaces Limitaciones conocidas del sistema}}{30}{table.caption.25}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }

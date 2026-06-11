@@ -47,6 +47,9 @@ casa-monarca-frontend/uploads/*
 casa-monarca-frontend/uploads/documentos/*
 !casa-monarca-frontend/uploads/documentos/.gitkeep
 
+# Instrucciones (documentos internos, no subir a GitHub)
+instrucciones */
+
 # LaTeX/Documentation
 manual_usuario/*.aux
 manual_usuario/*.fdb_latexmk
