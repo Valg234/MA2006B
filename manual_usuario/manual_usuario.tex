@@ -15,6 +15,8 @@
 \usepackage{caption}
 \usepackage{enumitem}
 \usepackage{setspace}
+\usepackage{tcolorbox}
+\usepackage{mdframed}
 
 \renewcommand{\familydefault}{\sfdefault}
 
@@ -29,6 +31,7 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{5pt}
 \captionsetup{font=small,labelfont=bf}
+
 \hypersetup{
   colorlinks=true,
   linkcolor=black,
@@ -37,17 +40,71 @@
   pdfauthor={Equipo 5}
 }
 
-\newcommand{\screenshot}[3]{
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{#1}
-    \caption{#2}
-    \label{#3}
-  \end{figure}
+%% Caja de consejo (azul)
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{consejobox}{
+  enhanced,
+  colback=blue!5!white,
+  colframe=blue!40!black,
+  title={\bfseries Consejo},
+  fonttitle=\small\bfseries,
+  left=4pt, right=4pt, top=3pt, bottom=3pt,
+  breakable
 }
 
-\begin{document}
+%% Caja de advertencia (naranja)
+\newtcolorbox{importantebox}{
+  enhanced,
+  colback=orange!8!white,
+  colframe=orange!70!black,
+  title={\bfseries Importante},
+  fonttitle=\small\bfseries,
+  left=4pt, right=4pt, top=3pt, bottom=3pt,
+  breakable
+}
 
+%% Caja de error / alerta (roja)
+\newtcolorbox{alertabox}{
+  enhanced,
+  colback=red!5!white,
+  colframe=red!60!black,
+  title={\bfseries Atención},
+  fonttitle=\small\bfseries,
+  left=4pt, right=4pt, top=3pt, bottom=3pt,
+  breakable
+}
+
+%% Comando para screenshot disponible
+\newcommand{\screenshot}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\textwidth]{#1}
+    \caption{#2}
+    \label{#3}
+  \end{figure}%
+}
+
+%% Comando para screenshot pendiente de agregar manualmente
+\newcommand{\pendingshot}[2]{%
+  \begin{figure}[H]
+    \centering
+    \fbox{\parbox{0.85\textwidth}{\centering\vspace{1.5em}
+      \textcolor{red!70!black}{\Large\bfseries [CAPTURA PENDIENTE]}\\[0.6em]
+      Archivo: \texttt{capturas/#1}\\[0.3em]
+      \textit{#2}\vspace{1.5em}
+    }}
+    \caption{#2 (captura por agregar).}
+    \label{fig:#1}
+  \end{figure}%
+}
+
+%%============================================================
+\begin{document}
+%%============================================================
+
+%%------------------------------------------------------------
+%% PORTADA
+%%------------------------------------------------------------
 \begin{titlepage}
   \centering
   \vspace*{0.5cm}
@@ -64,11 +121,11 @@
   \vspace{1.0cm}
   {\Large\bfseries Manual de Usuario\par}
   \vspace{0.2cm}
-  {\large Gestor de Identidades MA2006B 2026\par}
+  {\large Gestor de Identidades\par}
   {\large Versión v1.0\par}
 
   \vspace{1.0cm}
-  {\bfseries Socio Formador:} Casa Monarca\par
+  {\bfseries Socio Formador:} Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P.\par
   \vspace{0.5cm}
   {\bfseries Profesores:} Raúl Gómez, Anas Wajid y Alberto F. Martínez\par
 
@@ -81,13 +138,16 @@
   Alberto Rodríguez Reyes (A01383805)\par
   Diego Alberto Rodríguez Ruiz (A01571638)\par
   Rubén Jiménez Sarmiento (A01286256)\par
-  Hector Alonso Flores Melendez (A01571545)\par
+  Hector Alonso Flores Meléndez (A01571545)\par
   Valeria García Hernández (A01742811)\par
 
   \vfill
-  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 30 de abril de 2026\par
+  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 12 de junio de 2026\par
 \end{titlepage}
 
+%%------------------------------------------------------------
+%% ÍNDICES
+%%------------------------------------------------------------
 \pagenumbering{roman}
 \tableofcontents
 \listoftables
@@ -95,312 +155,656 @@
 \clearpage
 \pagenumbering{arabic}
 
+%%============================================================
 \chapter{Introducción}
+%%============================================================
 
-El Gestor de Identidades de Casa Monarca es una aplicación web orientada al registro, consulta y seguimiento de información operativa relacionada con usuarios, migrantes, solicitudes y documentos. Este manual se enfoca en el módulo \textbf{Gestor de documentos}, donde se administra el flujo de revisión y firma digital de documentos.
+Bienvenido al \textbf{Gestor de Identidades de Casa Monarca}. Esta aplicación fue desarrollada para ayudar al equipo de Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P.\ a administrar de manera segura y ordenada la información del personal, los expedientes de migrantes y los documentos institucionales.
 
-La aplicación sirve para centralizar documentos, identificar su etapa actual, controlar qué rol puede realizar cada acción y registrar la firma digital del coordinador cuando corresponde. El flujo principal del módulo se resume como \textbf{Ventanilla} $\rightarrow$ \textbf{Operador / Verificación} $\rightarrow$ \textbf{Coordinador / Firma} $\rightarrow$ \textbf{Inserción final}.
+Con este sistema usted puede:
 
-El manual está dirigido a usuarios administrativos, coordinadores, operadores y usuarios de consulta que participan en el proceso documental de Casa Monarca. También puede ser usado por personal técnico para validar el comportamiento esperado durante instalación, pruebas o capacitación.
+\begin{itemize}
+  \item Iniciar sesión de forma segura con su correo y contraseña.
+  \item Gestionar usuarios del sistema (si usted es administrador).
+  \item Registrar y actualizar expedientes de migrantes atendidos.
+  \item Subir documentos institucionales y darles seguimiento a través del flujo de revisión y firma.
+  \item Firmar digitalmente documentos como coordinador, garantizando que nadie más los pudo haber autorizado.
+  \item Consultar solicitudes pendientes del equipo.
+\end{itemize}
 
+\textbf{¿Para quién es este manual?}
+
+Este manual está dirigido a todo el personal de Casa Monarca que utilizará el sistema: administradores, coordinadores, operadores y usuarios de consulta. No se requieren conocimientos técnicos de computación para seguir las instrucciones.
+
+Cada sección indica claramente qué rol necesita para realizar cada tarea. Si una sección tiene una etiqueta como \textbf{[Solo administrador]}, significa que únicamente el personal con ese perfil podrá llevarla a cabo.
+
+\begin{consejobox}
+Si en algún momento el sistema muestra un mensaje de error o no responde como esperaba, consulte el capítulo~\ref{cap:problemas} de este manual: \textit{Solución de Problemas}.
+\end{consejobox}
+
+%%============================================================
 \chapter{Requerimientos del Sistema}
+%%============================================================
 
-\section{Hardware mínimo}
+\section{¿Qué necesita para usar el sistema?}
+
+El Gestor de Identidades es una aplicación que se usa desde el navegador de internet, igual que consultar una página web. Para utilizarlo usted solo necesita:
+
+\begin{itemize}
+  \item Una computadora o laptop (Windows, macOS o Linux).
+  \item Un navegador de internet actualizado: Google Chrome, Mozilla Firefox o Microsoft Edge.
+  \item Conexión al servidor donde está instalada la aplicación (red local de la institución o internet, según cómo esté configurado).
+  \item Su correo electrónico y contraseña registrados en el sistema.
+\end{itemize}
+
+\begin{importantebox}
+El sistema \textbf{no funciona} en Internet Explorer. Use Chrome, Firefox o Edge.
+\end{importantebox}
 
 \begin{table}[H]
 \centering
-\caption{Hardware mínimo recomendado}
+\caption{Requisitos mínimos del equipo del usuario.}
 \label{tab:hardware}
-\begin{tabular}{p{0.32\textwidth} p{0.55\textwidth}}
+\begin{tabular}{p{0.28\textwidth} p{0.60\textwidth}}
 \toprule
 \textbf{Componente} & \textbf{Recomendación} \\
 \midrule
-Procesador & Doble núcleo o superior. \\
-Memoria RAM & 4 GB mínimo; 8 GB recomendado para pruebas locales. \\
-Almacenamiento & 1 GB disponible para aplicación, dependencias y documentos de prueba. \\
-Red & Acceso local al servidor web y a la base de datos. \\
+Procesador & Cualquier computadora fabricada después del año 2015. \\
+Memoria RAM & 4 GB o más. \\
+Conexión & Red local o internet con acceso al servidor de la aplicación. \\
+Resolución de pantalla & 1280 × 720 píxeles o superior. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Software necesario}
+\section{Sobre la instalación del sistema}
 
-\begin{table}[H]
-\centering
-\caption{Software requerido}
-\label{tab:software}
-\begin{tabular}{p{0.30\textwidth} p{0.57\textwidth}}
-\toprule
-\textbf{Elemento} & \textbf{Uso dentro del sistema} \\
-\midrule
-Navegador web moderno & Acceso a la interfaz de usuario. Se recomienda Chrome, Chromium, Edge o Firefox. \\
-Servidor web con PHP & Ejecución de los endpoints ubicados en la carpeta \texttt{api}. \\
-Base de datos MySQL o MariaDB & Almacenamiento de usuarios, documentos, historial y firmas. \\
-Node.js y npm & Ejecución del frontend React durante desarrollo o pruebas. \\
-Vite & Servidor de desarrollo usado por el frontend React. \\
-\bottomrule
-\end{tabular}
-\end{table}
+La instalación del servidor es una tarea que realiza el equipo técnico \textbf{una sola vez}. Una vez que el sistema está funcionando, los usuarios finales no necesitan instalar nada en su computadora; basta con abrir el navegador y entrar a la dirección indicada por el administrador técnico.
 
-\section{Versiones compatibles}
+Si usted es el responsable técnico de instalar el sistema por primera vez, consulte el \textbf{Manual de Desarrollo} que acompaña este proyecto.
 
-El frontend está construido con React, React Router y Bootstrap. Para pruebas locales se recomienda usar una versión vigente de Node.js compatible con el proyecto, un servidor PHP habilitado y una base MySQL/MariaDB configurada con la base de datos \texttt{casa\_monarca}.
+%%============================================================
+\chapter{Instalación y Configuración Inicial}
+\label{cap:instalacion}
+%%============================================================
 
-\chapter{Instalación}
+\begin{importantebox}
+Este capítulo es para el \textbf{personal técnico} que configura el sistema por primera vez. Si usted es usuario final (coordinador, operador, consulta), puede saltar directamente al Capítulo~\ref{cap:inicio}.
+\end{importantebox}
 
-\section{Preparación del entorno}
+\section{Resumen del proceso de instalación}
 
-Antes de iniciar, confirmar que el equipo tenga instalado el servidor web, PHP, MySQL o MariaDB, Node.js y npm. La carpeta del proyecto debe estar disponible en el servidor local para que los endpoints PHP puedan responder desde \texttt{/api}.
-
-\section{Pasos de instalación}
+La instalación del Gestor de Identidades consta de cuatro pasos principales:
 
 \begin{enumerate}[label=\arabic*.]
-  \item Copiar el proyecto en el directorio de trabajo del servidor local.
-  \item Configurar la conexión a la base de datos en el archivo de conexión PHP.
-  \item Verificar que la base de datos \texttt{casa\_monarca} exista y contenga las tablas requeridas.
-  \item Entrar a la carpeta del frontend.
-  \item Instalar dependencias con \texttt{npm install}, si aún no existen.
-  \item Iniciar el frontend con \texttt{npm run dev}.
-  \item Abrir en el navegador la dirección indicada por Vite.
-  \item Verificar que las llamadas a \texttt{/api} respondan correctamente.
+  \item Instalar y configurar el servidor web (XAMPP o equivalente).
+  \item Importar la base de datos.
+  \item Configurar la conexión de la aplicación.
+  \item Poner en marcha el servidor del frontend.
 \end{enumerate}
 
-\section{Consideraciones importantes}
+\section{Paso 1 — Instalar XAMPP}
 
-Los documentos cargados por el sistema deben conservarse en la carpeta de archivos configurada para el backend. Si se mueve el proyecto de ubicación, también debe revisarse la ruta usada para visualizar los documentos. Los usuarios de tipo operador o consulta deben tener un coordinador asignado para participar correctamente en el flujo documental.
+XAMPP es el programa que actúa como servidor web en la computadora donde se instalará el sistema. Descárguelo desde \url{https://www.apachefriends.org/} e instálelo con las opciones predeterminadas.
 
+Una vez instalado, abra el \textbf{Panel de Control de XAMPP} y presione \textbf{Start} junto a \textbf{Apache} y junto a \textbf{MySQL}.
+
+\begin{consejobox}
+Si aparece un error al iniciar Apache que dice ``Port 80 in use'', otro programa está usando ese puerto. Cierre Skype o cualquier otro servidor web que pudiera estar activo.
+\end{consejobox}
+
+\section{Paso 2 — Copiar el proyecto}
+
+Copie la carpeta del proyecto dentro de la carpeta \texttt{htdocs} de XAMPP. En Windows, esta carpeta se encuentra en \texttt{C:\textbackslash xampp\textbackslash htdocs\textbackslash}. El resultado debe quedar así:
+
+\begin{center}
+\texttt{C:\textbackslash xampp\textbackslash htdocs\textbackslash casa-monarca-frontend\textbackslash}
+\end{center}
+
+\section{Paso 3 — Importar la base de datos}
+
+\begin{enumerate}[label=\arabic*.]
+  \item Abra su navegador y vaya a \texttt{http://localhost/phpmyadmin}.
+  \item Haga clic en \textbf{Nueva} (panel izquierdo) para crear una base de datos llamada \texttt{casa\_monarca}.
+  \item Seleccione la base de datos recién creada.
+  \item Haga clic en la pestaña \textbf{Importar}.
+  \item Seleccione el archivo \texttt{casa\_monarca.sql} que viene dentro del proyecto (carpeta \texttt{database/}).
+  \item Presione \textbf{Continuar}.
+\end{enumerate}
+
+\begin{importantebox}
+Asegúrese de que la importación termina sin errores. Si aparece un mensaje en rojo, verifique que el archivo \texttt{.sql} no esté dañado o incompleto.
+\end{importantebox}
+
+\section{Paso 4 — Configurar la conexión}
+
+Abra el archivo \texttt{api/conexion.php} con cualquier editor de texto (como Bloc de notas o Notepad++). Verifique que los datos de conexión coincidan con su servidor:
+
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Servidor} & \texttt{localhost} \\
+\textbf{Usuario MySQL} & \texttt{root} (predeterminado en XAMPP) \\
+\textbf{Contraseña MySQL} & vacía (predeterminado en XAMPP) \\
+\textbf{Base de datos} & \texttt{casa\_monarca} \\
+\end{tabular}
+\end{center}
+
+Si su instalación de MySQL tiene contraseña, ingrésela en el campo correspondiente.
+
+\section{Paso 5 — Iniciar el frontend}
+
+El frontend requiere \textbf{Node.js} instalado en la computadora. Si aún no lo tiene, descárguelo desde \url{https://nodejs.org/} e instale la versión LTS.
+
+Abra una ventana de símbolo del sistema (CMD) o terminal dentro de la carpeta del proyecto y ejecute:
+
+\begin{center}
+\texttt{npm install}
+\end{center}
+
+Espere a que finalice (puede tomar unos minutos la primera vez). Luego ejecute:
+
+\begin{center}
+\texttt{npm run dev}
+\end{center}
+
+El sistema mostrará la dirección donde está disponible la aplicación, usualmente \texttt{http://localhost:5173}. Abra esa dirección en el navegador.
+
+\begin{consejobox}
+La ventana de símbolo del sistema debe permanecer abierta mientras se usa el sistema. Si la cierra, el frontend dejará de funcionar.
+\end{consejobox}
+
+\section{Crear el primer usuario administrador}
+
+Al importar la base de datos, se crea automáticamente un usuario administrador de ejemplo. Consulte las credenciales iniciales en el archivo \texttt{README.md} del proyecto o con el equipo técnico. Se recomienda cambiar la contraseña inmediatamente después del primer ingreso.
+
+%%============================================================
 \chapter{Inicio de la Aplicación}
+\label{cap:inicio}
+%%============================================================
 
-\section{Acceso}
+\section{Abrir el sistema}
 
-Para acceder a la aplicación, abrir el navegador y entrar a la URL local o institucional configurada para el sistema. En un entorno de desarrollo, la dirección usual es \texttt{http://localhost} o la URL indicada por el servidor de desarrollo.
+Para entrar al Gestor de Identidades, abra su navegador de internet y escriba en la barra de dirección la URL que le proporcionó el administrador del sistema. Si está en un entorno de pruebas local, la dirección usual es:
 
-\screenshot{capturas/01-login.png}{Pantalla inicial de inicio de sesión.}{fig:login}
+\begin{center}
+\texttt{http://localhost:5173}
+\end{center}
 
-\section{Inicio de sesión}
+Verá la pantalla de inicio de sesión como se muestra en la Figura~\ref{fig:01-login}.
 
-En la pantalla de inicio de sesión se capturan el correo electrónico y la contraseña del usuario. Al presionar \textbf{Ingresar}, el sistema valida las credenciales y redirige al dashboard si la sesión es correcta.
+\screenshot{capturas/01-login.png}{Pantalla de inicio de sesión del Gestor de Identidades.}{fig:01-login}
+
+\section{Iniciar sesión}
 
 \begin{enumerate}[label=\arabic*.]
-  \item Escribir el correo electrónico registrado.
-  \item Escribir la contraseña.
-  \item Presionar el botón \textbf{Ingresar}.
-  \item Confirmar que el dashboard muestre el nombre, rol y correo del usuario.
+  \item En el campo \textbf{Correo electrónico}, escriba el correo con el que fue registrado en el sistema.
+  \item En el campo \textbf{Contraseña}, escriba su contraseña. Los caracteres aparecerán como puntos para proteger su privacidad.
+  \item Presione el botón \textbf{Ingresar}.
 \end{enumerate}
 
-\screenshot{capturas/02-dashboard-admin.png}{Dashboard de Casa Monarca con sesión de administrador.}{fig:dashboard}
+Si sus datos son correctos, el sistema lo llevará directamente al \textbf{Dashboard} (pantalla principal), donde verá su nombre, rol y las opciones disponibles para usted.
 
+\screenshot{capturas/02-dashboard-admin.png}{Dashboard principal del sistema con sesión de administrador iniciada.}{fig:02-dashboard}
+
+\begin{importantebox}
+Si el sistema muestra un mensaje de error, revise:
+\begin{itemize}
+  \item Que su correo esté escrito correctamente (sin espacios al inicio o al final).
+  \item Que las mayúsculas y minúsculas de su contraseña sean correctas.
+  \item Que su cuenta esté activa. Si sospecha que fue desactivada, contacte al administrador del sistema.
+\end{itemize}
+\end{importantebox}
+
+\section{Entender la pantalla principal (Dashboard)}
+
+Después de iniciar sesión, verá el \textbf{Dashboard}. Esta es su pantalla de inicio con acceso a todos los módulos del sistema. En la parte superior encontrará:
+
+\begin{itemize}
+  \item Su nombre y rol actual (por ejemplo: \textit{María García — Consulta}).
+  \item El menú de navegación con los módulos a los que tiene acceso.
+  \item Un botón para \textbf{Cerrar sesión}.
+\end{itemize}
+
+\begin{consejobox}
+Solo verá en el menú los módulos que corresponden a su rol. Es normal no ver todas las opciones si es operador, consulta o coordinador.
+\end{consejobox}
+
+\section{Cerrar sesión}
+
+Cuando termine de usar el sistema, presione el botón \textbf{Cerrar sesión} que aparece en la parte superior de la pantalla. Esto protege su cuenta e impide que otras personas accedan con sus datos si comparte la computadora.
+
+\begin{alertabox}
+\textbf{Nunca cierre solo la ventana del navegador} sin cerrar sesión primero, especialmente en computadoras compartidas.
+\end{alertabox}
+
+%%============================================================
 \chapter{Guía de Uso}
+%%============================================================
+
+Este capítulo explica, paso a paso, cómo realizar cada tarea disponible en el sistema, organizado por módulo. Al inicio de cada sección encontrará una etiqueta que indica qué rol puede acceder a esa función.
 
 \section{Roles del sistema}
 
+Cada persona que usa el sistema tiene un \textbf{rol} que determina qué puede hacer. Conozca su rol en la pantalla principal (Dashboard), donde se muestra junto a su nombre.
+
 \begin{table}[H]
 \centering
-\caption{Roles y permisos principales en el gestor de documentos}
+\caption{Roles del sistema y sus responsabilidades principales.}
 \label{tab:roles}
-\begin{tabular}{p{0.22\textwidth} p{0.65\textwidth}}
+\begin{tabular}{p{0.18\textwidth} p{0.70\textwidth}}
 \toprule
-\textbf{Rol} & \textbf{Acciones principales} \\
+\textbf{Rol} & \textbf{¿Qué puede hacer?} \\
 \midrule
-Admin & Consulta documentos, aprueba desde Ventanilla y realiza la inserción final. \\
-Coordinador & Consulta documentos de su coordinación y firma documentos en etapa Operador. \\
-Operador & Consulta documentos de su coordinación y aprueba documentos desde Ventanilla. \\
-Consulta & Sube documentos y consulta documentos asociados a su coordinador. \\
+\textbf{Admin} & Gestionar todos los usuarios, aprobar documentos desde Ventanilla, realizar la inserción final y acceder a todos los módulos. \\[4pt]
+\textbf{Coordinador} & Firmar documentos digitalmente, consultar expedientes de migrantes y documentos de su coordinación, y generar sus llaves de firma. \\[4pt]
+\textbf{Operador} & Aprobar documentos en etapa Ventanilla, registrar migrantes y consultar documentos de su coordinación. \\[4pt]
+\textbf{Consulta} & Subir documentos nuevos y consultar la información del sistema sin modificarla. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Acceder al gestor de documentos}
+%%============================================================
+\section{Módulo: Panel de Administración}
+\label{sec:admin}
+%%============================================================
 
-\textbf{Objetivo:} abrir el módulo donde se consultan, cargan, firman y avanzan documentos.
+\textbf{Disponible para:} \fbox{Admin}
 
-\begin{enumerate}[label=\arabic*.]
-  \item Iniciar sesión con un usuario autorizado.
-  \item En el dashboard, seleccionar \textbf{Gestor de documentos}.
-  \item Confirmar que la pantalla muestre el título \textbf{Gestor de documentos}.
-\end{enumerate}
+\vspace{0.4em}
+El Panel de Administración es donde se gestiona el personal del sistema: crear nuevas cuentas, modificar datos de usuarios existentes y desactivar cuentas cuando sea necesario.
 
-\textbf{Resultado esperado:} el sistema muestra estadísticas por etapa, el formulario de nuevo documento y la tabla de documentos registrados.
+Para acceder, haga clic en \textbf{Administración} en el menú principal del Dashboard.
 
-\screenshot{capturas/03-gestor-documentos-inicial.png}{Vista inicial del gestor de documentos.}{fig:gestor-inicial}
+\screenshot{capturas/13-admin-panel-usuarios.png}{Panel de Administración con la lista de usuarios registrados en el sistema.}{fig:13-admin-panel}
 
-\section{Subir un documento}
+\subsection{Entender la lista de usuarios}
 
-\textbf{Objetivo:} registrar un documento nuevo e iniciar el flujo en etapa Ventanilla.
+Al abrir el Panel de Administración, verá una tabla con todos los usuarios registrados. Cada fila muestra:
 
-\begin{enumerate}[label=\arabic*.]
-  \item Ingresar al módulo \textbf{Gestor de documentos}.
-  \item En la sección \textbf{Nuevo documento}, escribir un título.
-  \item Capturar una descripción breve.
-  \item Seleccionar el archivo correspondiente.
-  \item Presionar \textbf{Subir documento}.
-\end{enumerate}
+\begin{itemize}
+  \item \textbf{Nombre} y \textbf{correo} del usuario.
+  \item \textbf{Rol} asignado.
+  \item \textbf{Estado}: \textit{activo}, \textit{inactivo} o \textit{revocado}.
+  \item \textbf{Vigencia}: fecha hasta la que la cuenta es válida.
+  \item \textbf{Certificado}: código único que identifica a ese usuario en el sistema.
+  \item Botones de \textbf{Editar} y \textbf{Eliminar}.
+\end{itemize}
 
-\textbf{Ejemplo:} el usuario de consulta María García registra el documento \textit{Expediente de validación}.
-
-\textbf{Resultado esperado:} el sistema muestra el mensaje \textit{Documento creado correctamente} y agrega el documento a la tabla en etapa \textbf{V - Ventanilla}.
-
-\screenshot{capturas/04-formulario-nuevo-documento.png}{Formulario para crear un documento.}{fig:nuevo-documento}
-\screenshot{capturas/05-documento-etapa-ventanilla.png}{Documento creado en etapa Ventanilla.}{fig:documento-ventanilla}
-
-\section{Consultar documentos registrados}
-
-\textbf{Objetivo:} revisar el estado, archivo, coordinador asignado y acciones disponibles de cada documento.
+\subsection{Crear un nuevo usuario}
 
 \begin{enumerate}[label=\arabic*.]
-  \item Abrir el gestor de documentos.
-  \item Revisar la tabla \textbf{Documentos registrados}.
-  \item Identificar el título, etapa, coordinador, archivo, ticket de firma y acciones.
+  \item En el Panel de Administración, busque el botón \textbf{Nuevo usuario} o \textbf{Crear usuario}.
+  \item Se abrirá un formulario. Complete los campos:
+    \begin{itemize}
+      \item \textbf{Nombre completo}: nombre del nuevo colaborador.
+      \item \textbf{Correo electrónico}: será su nombre de usuario para iniciar sesión.
+      \item \textbf{Contraseña}: asigne una contraseña inicial segura. Infórmesela al colaborador de forma privada para que la cambie después.
+      \item \textbf{Rol}: seleccione el rol correspondiente (Admin, Coordinador, Operador o Consulta).
+      \item \textbf{Estado}: déjelo en \textit{activo} para que el usuario pueda ingresar desde el primer día.
+      \item \textbf{Vigencia}: fecha hasta la cual la cuenta estará activa. Después de esa fecha, el usuario no podrá iniciar sesión.
+      \item \textbf{Coordinador asignado}: si el nuevo usuario es operador o consulta, seleccione el coordinador al que pertenece.
+    \end{itemize}
+  \item Presione \textbf{Guardar} o \textbf{Crear usuario}.
 \end{enumerate}
 
-\textbf{Resultado esperado:} cada documento muestra su etapa actual y solo las acciones permitidas para el rol en sesión.
+\screenshot{capturas/14-admin-crear-usuario.png}{Formulario para registrar un nuevo usuario en el sistema.}{fig:14-crear-usuario}
 
-\section{Interpretar las etapas del flujo}
+\begin{consejobox}
+El sistema genera automáticamente un \textbf{código de certificado único} para cada usuario nuevo. Este código es la identidad digital del colaborador dentro del sistema. No necesita anotarlo; el sistema lo guarda solo.
+\end{consejobox}
+
+\begin{importantebox}
+La fecha de vigencia es muy importante. Si la vigencia vence, el usuario verá un mensaje de ``acceso denegado'' al intentar entrar. Recuerde revisar y renovar las vigencias periodicamente.
+\end{importantebox}
+
+\subsection{Editar un usuario existente}
+
+Use esta opción para actualizar datos, cambiar el estado de una cuenta o extender la vigencia de un colaborador.
+
+\begin{enumerate}[label=\arabic*.]
+  \item En la lista de usuarios, localice al colaborador que desea modificar.
+  \item Presione el botón \textbf{Editar} (ícono de lápiz) en su fila.
+  \item Modifique los campos necesarios.
+  \item Presione \textbf{Guardar cambios}.
+\end{enumerate}
+
+\screenshot{capturas/15-admin-editar-usuario.png}{Formulario de edición de un usuario existente.}{fig:15-editar-usuario}
+
+\textbf{Casos frecuentes de edición:}
+
+\begin{itemize}
+  \item \textbf{Colaborador que se va temporalmente}: cambie el estado a \textit{inactivo}. Su cuenta queda guardada pero no puede acceder.
+  \item \textbf{Colaborador que regresa}: cambie el estado de vuelta a \textit{activo}.
+  \item \textbf{Vigencia próxima a vencer}: actualice la fecha de vigencia a una nueva fecha futura.
+  \item \textbf{Cambio de puesto}: actualice el rol y, si aplica, el coordinador asignado.
+\end{itemize}
+
+\subsection{Eliminar un usuario}
+
+\begin{alertabox}
+Eliminar un usuario es una acción permanente. El usuario y toda su información se borran del sistema. Si solo desea que el colaborador no pueda entrar temporalmente, use la opción \textbf{Editar} y cambie el estado a \textit{inactivo} en lugar de eliminarlo.
+\end{alertabox}
+
+\begin{enumerate}[label=\arabic*.]
+  \item En la lista de usuarios, localice al colaborador a eliminar.
+  \item Presione el botón \textbf{Eliminar} (ícono de basura) en su fila.
+  \item Confirme la acción en el mensaje que aparece.
+\end{enumerate}
+
+\subsection{Los tres estados de una cuenta}
 
 \begin{table}[H]
 \centering
-\caption{Etapas del flujo documental VOCA}
-\label{tab:etapas}
-\begin{tabular}{p{0.16\textwidth} p{0.28\textwidth} p{0.43\textwidth}}
+\caption{Estados posibles de una cuenta de usuario.}
+\label{tab:estados}
+\begin{tabular}{p{0.16\textwidth} p{0.70\textwidth}}
 \toprule
-\textbf{Clave} & \textbf{Nombre} & \textbf{Significado} \\
+\textbf{Estado} & \textbf{Significado} \\
 \midrule
-V & Ventanilla & Documento recibido o creado inicialmente. \\
-O & Operador / Verificación & Documento aprobado para revisión operativa. \\
-C & Coordinador / Firma & Documento firmado digitalmente por el coordinador. \\
-A & Inserción final & Documento finalizado por el administrador. \\
+Activo & El usuario puede iniciar sesión y usar el sistema normalmente. \\
+Inactivo & El usuario no puede iniciar sesión. Su cuenta y datos están guardados. \\
+Revocado & La cuenta fue bloqueada de forma definitiva (por ejemplo, por mal uso del sistema). \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Aprobar documento como operador}
+%%============================================================
+\section{Módulo: Gestor de Documentos}
+\label{sec:gestor}
+%%============================================================
 
-\textbf{Objetivo:} avanzar un documento desde Ventanilla hacia Operador / Verificación.
+\textbf{Disponible para:} \fbox{Admin} \fbox{Coordinador} \fbox{Operador} \fbox{Consulta}
 
-\begin{enumerate}[label=\arabic*.]
-  \item Iniciar sesión con rol operador.
-  \item Abrir el gestor de documentos.
-  \item Localizar un documento en etapa \textbf{V - Ventanilla}.
-  \item Presionar el botón \textbf{Aprobar}.
-  \item Confirmar el mensaje del sistema.
-\end{enumerate}
+\vspace{0.4em}
+El Gestor de Documentos es el módulo central del sistema. Aquí se administra el recorrido de cada documento institucional, desde que se sube por primera vez hasta que queda archivado definitivamente.
 
-\textbf{Ejemplo:} la operadora Ana Martínez aprueba el expediente creado por María García.
+Para acceder, haga clic en \textbf{Gestor de documentos} en el menú del Dashboard.
 
-\textbf{Resultado esperado:} el documento cambia a etapa \textbf{O - Operador / Verificación}.
+\screenshot{capturas/03-gestor-documentos-inicial.png}{Vista inicial del Gestor de Documentos con estadísticas por etapa.}{fig:gestor-inicial}
 
-\screenshot{capturas/06-aprobacion-operador.png}{Botón de aprobación visible para el operador.}{fig:aprobar-operador}
-\screenshot{capturas/07-documento-etapa-operador.png}{Documento avanzado a etapa Operador / Verificación.}{fig:documento-operador}
+\subsection{El flujo de un documento: de Ventanilla a Inserción Final}
 
-\section{Firmar documento como coordinador}
+Cada documento recorre cuatro etapas. Piense en ellas como pasos de revisión y autorización:
 
-\textbf{Objetivo:} firmar digitalmente un documento que está en etapa Operador / Verificación.
+\begin{table}[H]
+\centering
+\caption{Etapas del flujo documental y quién actúa en cada una.}
+\label{tab:etapas}
+\begin{tabular}{p{0.08\textwidth} p{0.24\textwidth} p{0.20\textwidth} p{0.33\textwidth}}
+\toprule
+\textbf{Clave} & \textbf{Etapa} & \textbf{¿Quién actúa?} & \textbf{¿Qué sucede?} \\
+\midrule
+\textbf{V} & Ventanilla & Operador o Admin & El documento fue recibido. Se revisa y se aprueba para continuar. \\
+\textbf{O} & Operador / Verificación & Coordinador & El documento está listo para firma. El coordinador lo firma digitalmente. \\
+\textbf{C} & Coordinador / Firma & Admin & El documento fue firmado. El administrador hace la inserción final. \\
+\textbf{A} & Inserción Final & — & El documento está archivado. Proceso completo. \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\begin{enumerate}[label=\arabic*.]
-  \item Iniciar sesión con rol coordinador.
-  \item Abrir el gestor de documentos.
-  \item Localizar un documento en etapa \textbf{O - Operador / Verificación}.
-  \item Presionar \textbf{Firmar documento}.
-  \item Ingresar la contraseña de firma cuando el sistema la solicite.
-  \item Confirmar el mensaje de firma correcta.
-\end{enumerate}
+\subsection{Subir un documento nuevo}
 
-\textbf{Ejemplo:} el coordinador Carlos Pérez firma el expediente usando su contraseña de firma.
-
-\textbf{Resultado esperado:} el sistema genera un folio de firma, registra la fecha, identifica al coordinador firmante y cambia el documento a etapa \textbf{C - Coordinador / Firma}.
-
-\screenshot{capturas/08-firma-coordinador.png}{Acción de firma disponible para el coordinador.}{fig:firma-coordinador}
-\screenshot{capturas/09-ticket-firma.png}{Ticket y folio generados después de la firma digital.}{fig:ticket-firma}
-
-\section{Verificar firma digital}
-
-\textbf{Objetivo:} comprobar que la firma registrada pertenece al coordinador y corresponde al documento.
+\textbf{Disponible para:} \fbox{Todos los roles}
 
 \begin{enumerate}[label=\arabic*.]
-  \item Abrir el gestor de documentos.
-  \item Localizar un documento con ticket de firma.
-  \item Presionar \textbf{Verificar firma}.
-  \item Revisar el mensaje de verificación mostrado por el sistema.
+  \item Abra el Gestor de Documentos.
+  \item En la sección \textbf{Nuevo documento}, escriba un \textbf{título} descriptivo para el documento.
+  \item Escriba una breve \textbf{descripción} del contenido.
+  \item Haga clic en el botón de selección de archivo y elija el archivo desde su computadora.
+  \item Presione \textbf{Subir documento}.
 \end{enumerate}
 
-\textbf{Resultado esperado:} el sistema indica si la firma es válida y muestra el coordinador asociado.
+\textbf{Resultado:} el sistema confirma que el documento fue creado y lo agrega a la tabla en etapa \textbf{V — Ventanilla}.
 
-\screenshot{capturas/10-verificacion-firma.png}{Documento firmado con opción de verificación disponible.}{fig:verificacion-firma}
+\screenshot{capturas/04-formulario-nuevo-documento.png}{Formulario para registrar y subir un documento nuevo.}{fig:nuevo-documento}
+\screenshot{capturas/05-documento-etapa-ventanilla.png}{El documento recién creado aparece en la tabla en etapa Ventanilla.}{fig:documento-ventanilla}
 
-\section{Realizar inserción final como administrador}
+\begin{importantebox}
+El sistema acepta archivos en los siguientes formatos: \textbf{PDF, Word (.doc, .docx), imágenes (.jpg, .png) y Excel (.xlsx)}. Si su archivo no carga, verifique que esté en uno de estos formatos.
+\end{importantebox}
 
-\textbf{Objetivo:} cerrar el flujo documental después de la firma del coordinador.
+\subsection{Aprobar un documento desde Ventanilla}
+
+\textbf{Disponible para:} \fbox{Operador} \fbox{Admin}
+
+Este paso significa que el documento fue revisado y está listo para pasar a la siguiente etapa.
 
 \begin{enumerate}[label=\arabic*.]
-  \item Iniciar sesión con rol administrador.
-  \item Abrir el gestor de documentos.
-  \item Localizar un documento en etapa \textbf{C - Coordinador / Firma}.
-  \item Presionar \textbf{Inserción final}.
-  \item Confirmar el mensaje del sistema.
+  \item En la tabla de documentos, localice el documento en etapa \textbf{V — Ventanilla}.
+  \item Presione el botón \textbf{Aprobar}.
+  \item El sistema actualizará la etapa del documento automáticamente.
 \end{enumerate}
 
-\textbf{Ejemplo:} Juan López finaliza el expediente firmado por Carlos Pérez.
+\textbf{Resultado:} el documento avanza a etapa \textbf{O — Operador / Verificación} y queda listo para que el coordinador lo firme.
 
-\textbf{Resultado esperado:} el documento cambia a etapa \textbf{A - Inserción final} y muestra la etiqueta \textbf{Finalizado}.
+\screenshot{capturas/06-aprobacion-operador.png}{Botón de aprobación visible para el operador en la etapa Ventanilla.}{fig:aprobar-operador}
+\screenshot{capturas/07-documento-etapa-operador.png}{El documento avanzó a la etapa Operador / Verificación.}{fig:documento-operador}
 
-\screenshot{capturas/11-insercion-final-admin.png}{Acción de inserción final disponible para el administrador.}{fig:insercion-final}
-\screenshot{capturas/12-documento-finalizado.png}{Documento finalizado en etapa Inserción final.}{fig:documento-finalizado}
+\subsection{Firmar un documento digitalmente}
 
+\textbf{Disponible para:} \fbox{Coordinador}
+
+La firma digital es el equivalente a una firma manuscrita, pero con la garantía de que no puede ser falsificada. Al firmar, el sistema registra que \textit{usted específicamente}, con su contraseña de firma, autorizó ese documento en esa fecha y hora.
+
+\begin{importantebox}
+Para poder firmar, usted debe tener configuradas sus \textbf{llaves de firma digital}. Si el botón no aparece o el sistema muestra un error al ingresar la contraseña, contacte al equipo técnico: las llaves de firma se configuran una sola vez por coordinador durante la puesta en marcha del sistema.
+\end{importantebox}
+
+\begin{enumerate}[label=\arabic*.]
+  \item En la tabla de documentos, localice el documento en etapa \textbf{O — Operador / Verificación}.
+  \item Verifique que el archivo sea el correcto antes de firmarlo (puede hacer clic en el nombre del archivo para verlo).
+  \item Presione el botón \textbf{Firmar documento}.
+  \item El sistema le pedirá su \textbf{contraseña de firma} (diferente a su contraseña de ingreso).
+  \item Ingrese su contraseña y presione \textbf{Confirmar firma}.
+\end{enumerate}
+
+\textbf{Resultado:} el sistema genera un \textbf{folio único de firma} y un ticket que registra: quién firmó, en qué fecha y a qué hora. El documento avanza a etapa \textbf{C — Coordinador / Firma}.
+
+\screenshot{capturas/08-firma-coordinador.png}{Botón de firma digital disponible para el coordinador.}{fig:firma-coordinador}
+\screenshot{capturas/09-ticket-firma.png}{Ticket con el folio generado después de la firma digital.}{fig:ticket-firma}
+
+\begin{alertabox}
+\textbf{Antes de firmar, revise bien el documento.} Una vez firmado, el sistema registra que usted lo autorizó. Si firma por error, contacte al administrador.
+\end{alertabox}
+
+\subsection{Verificar si un documento fue alterado}
+
+\textbf{Disponible para:} \fbox{Todos los roles}
+
+El sistema puede confirmar que un documento firmado no ha sido modificado desde que el coordinador lo firmó. Esto es útil si alguien tiene dudas sobre la autenticidad de un documento.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Localice el documento en la tabla.
+  \item Presione el botón \textbf{Verificar firma}.
+  \item El sistema mostrará un mensaje indicando si la firma es válida o si el documento fue alterado.
+\end{enumerate}
+
+\screenshot{capturas/10-verificacion-firma.png}{El sistema confirma que la firma es válida y el documento no fue modificado.}{fig:verificacion-firma}
+
+\subsection{Realizar la inserción final}
+
+\textbf{Disponible para:} \fbox{Admin}
+
+Este es el último paso del flujo. El administrador confirma que todo el proceso fue completado y archiva el documento definitivamente.
+
+\begin{enumerate}[label=\arabic*.]
+  \item Localice el documento en etapa \textbf{C — Coordinador / Firma}.
+  \item Presione el botón \textbf{Inserción final}.
+  \item Confirme la acción.
+\end{enumerate}
+
+\textbf{Resultado:} el documento queda en etapa \textbf{A — Inserción Final} con la etiqueta \textbf{Finalizado}. El flujo está completo.
+
+\screenshot{capturas/11-insercion-final-admin.png}{Botón de inserción final disponible para el administrador.}{fig:insercion-final}
+\screenshot{capturas/12-documento-finalizado.png}{Documento archivado en etapa de Inserción Final.}{fig:documento-finalizado}
+
+%%============================================================
+\section{Módulo: Migrantes}
+\label{sec:migrantes}
+%%============================================================
+
+\textbf{Disponible para:} \fbox{Admin} \fbox{Coordinador} \fbox{Operador} (consulta para \fbox{Consulta})
+
+\vspace{0.4em}
+El módulo de Migrantes permite registrar y consultar los expedientes de las personas atendidas por Casa Monarca.
+
+Para acceder, haga clic en \textbf{Migrantes} en el menú del Dashboard.
+
+\screenshot{capturas/17-modulo-migrantes.png}{Vista principal del módulo de Migrantes con la lista de expedientes registrados.}{fig:17-migrantes}
+
+\subsection{Consultar la lista de migrantes}
+
+Al abrir el módulo, verá una tabla con todos los migrantes registrados. Puede buscar por nombre o filtrar los resultados. Cada fila muestra los datos principales del expediente.
+
+\subsection{Registrar un nuevo migrante}
+
+\textbf{Disponible para:} \fbox{Admin} \fbox{Coordinador} \fbox{Operador}
+
+\begin{enumerate}[label=\arabic*.]
+  \item En el módulo de Migrantes, presione el botón \textbf{Registrar migrante} o \textbf{Nuevo migrante}.
+  \item Complete el formulario con los datos de la persona atendida.
+  \item Presione \textbf{Guardar}.
+\end{enumerate}
+
+\textbf{Resultado:} el expediente queda registrado en el sistema y aparece en la lista de migrantes.
+
+\screenshot{capturas/18-crear-migrante.png}{Formulario para registrar un nuevo expediente de migrante.}{fig:18-crear-migrante}
+
+\begin{importantebox}
+Los datos de los migrantes son \textbf{información confidencial}. Solo comparta o discuta esta información con personas autorizadas dentro de Casa Monarca. El sistema registra quién creó o modificó cada expediente.
+\end{importantebox}
+
+%%============================================================
+\section{Módulo: Solicitudes Push}
+\label{sec:solicitudes}
+%%============================================================
+
+\textbf{Disponible para:} \fbox{Admin} \fbox{Coordinador} \fbox{Operador} \fbox{Consulta}
+
+\vspace{0.4em}
+El módulo de Solicitudes Push permite al equipo comunicar avisos o peticiones internas dentro del sistema.
+
+Para acceder, haga clic en \textbf{Solicitudes} en el menú del Dashboard.
+
+\screenshot{capturas/19-solicitudes-push.png}{Vista del módulo de Solicitudes Push con las solicitudes registradas.}{fig:19-solicitudes}
+
+\begin{enumerate}[label=\arabic*.]
+  \item Abra el módulo de Solicitudes Push desde el menú.
+  \item Consulte las solicitudes existentes en la tabla.
+  \item Para crear una nueva solicitud, busque el botón correspondiente y complete el formulario.
+  \item Presione \textbf{Enviar} o \textbf{Guardar}.
+\end{enumerate}
+
+%%============================================================
 \chapter{Solución de Problemas}
+\label{cap:problemas}
+%%============================================================
 
-\begin{longtable}{p{0.30\textwidth} p{0.31\textwidth} p{0.27\textwidth}}
-\caption{Errores comunes y acciones recomendadas}
+Si algo no funciona como espera, revise primero en esta tabla si su situación aparece listada.
+
+\begin{longtable}{p{0.30\textwidth} p{0.28\textwidth} p{0.29\textwidth}}
+\caption{Problemas frecuentes y cómo resolverlos.}
 \label{tab:problemas}\\
 \toprule
-\textbf{Problema} & \textbf{Causa probable} & \textbf{Qué hacer} \\
+\textbf{¿Qué está pasando?} & \textbf{¿Por qué puede ocurrir?} & \textbf{¿Qué hacer?} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Problema} & \textbf{Causa probable} & \textbf{Qué hacer} \\
+\textbf{¿Qué está pasando?} & \textbf{¿Por qué puede ocurrir?} & \textbf{¿Qué hacer?} \\
 \midrule
 \endhead
-Credenciales incorrectas & Correo o contraseña inválidos. & Revisar datos de acceso y solicitar restablecimiento si es necesario. \\
-Respuesta inválida del servidor & El backend devolvió texto no compatible con JSON o ocurrió un error PHP. & Revisar conexión al servidor, logs y configuración de PHP. \\
-Archivo no permitido & La extensión no está autorizada por el sistema. & Usar archivos PDF, DOC, DOCX, JPG, JPEG, PNG o XLSX. \\
-Usuario sin coordinador asignado & Un operador o consulta no tiene coordinador relacionado. & Editar el usuario y asignarle un coordinador activo. \\
-Documento sin archivo físico & El documento no tiene archivo o la ruta no existe. & Verificar la carga del archivo y la carpeta de documentos. \\
-Contraseña de firma incorrecta & La contraseña no abre la clave privada del coordinador. & Capturar nuevamente la contraseña o regenerar llaves según el procedimiento técnico. \\
-Documento en etapa incorrecta & Se intenta avanzar o firmar desde una etapa no permitida. & Revisar la etapa actual y usar el rol correspondiente. \\
+El sistema dice ``correo o contraseña incorrectos'' & El correo o la contraseña no coinciden con los registrados. & Revise que no haya espacios de más. Si olvidó su contraseña, contacte al administrador. \\
+\midrule
+El sistema dice ``usuario no activo'' & Su cuenta fue desactivada por el administrador. & Contacte al administrador del sistema para que reactive su cuenta. \\
+\midrule
+El sistema dice ``vigencia expirada'' & La fecha de vigencia de su cuenta venció. & El administrador debe actualizar su fecha de vigencia. \\
+\midrule
+No aparece el botón que busca & Su rol no tiene permiso para esa acción, o el documento no está en la etapa correcta. & Revise la tabla de roles (Tabla~\ref{tab:roles}) y la etapa actual del documento. \\
+\midrule
+El archivo no se sube & El formato del archivo no está permitido o el archivo es muy grande. & Use PDF, Word, imagen o Excel. Verifique que el archivo no esté dañado. \\
+\midrule
+La firma dice ``contraseña incorrecta'' & La contraseña ingresada no es la contraseña \textit{de firma} (diferente al login). & Vuelva a intentarlo con la contraseña de firma correcta. Si la olvidó, el administrador deberá regenerar sus llaves. \\
+\midrule
+La verificación dice ``firma inválida'' & El archivo fue modificado después de haber sido firmado. & Avise al administrador. No use ese documento para trámites oficiales hasta aclarar la situación. \\
+\midrule
+La página aparece en blanco o con error & El servidor puede no estar activo. & Verifique con el área técnica que XAMPP esté encendido y el frontend esté en ejecución. \\
+\midrule
+El sistema tarda mucho en responder & Conexión lenta o el servidor está ocupado. & Espere unos segundos y vuelva a intentarlo. Si persiste, avise al área técnica. \\
 \bottomrule
 \end{longtable}
 
+Si su problema no aparece en la tabla, contacte al soporte técnico del sistema (ver datos al final de este manual).
+
+%%============================================================
 \chapter{Preguntas Frecuentes}
+%%============================================================
 
-\textbf{¿Qué significa el flujo V, O, C, A?}
+\textbf{¿Puedo usar el sistema desde mi celular?}
 
-Representa las etapas Ventanilla, Operador / Verificación, Coordinador / Firma e Inserción final. Cada etapa define qué rol puede intervenir.
+El sistema fue diseñado para computadoras y laptops. Puede funcionar en un celular, pero la experiencia es mejor en una pantalla más grande.
+
+\textbf{¿Qué significan las letras V, O, C, A en la tabla de documentos?}
+
+Son las iniciales de las cuatro etapas del flujo documental: \textbf{V}entanilla, \textbf{O}perador / Verificación, \textbf{C}oordinador / Firma y \textbf{A}rchivo (Inserción Final).
 
 \textbf{¿Todos los usuarios pueden subir documentos?}
 
-El sistema permite crear documentos desde el gestor para roles autorizados. Los usuarios operador y consulta deben tener coordinador asignado para que el documento quede vinculado correctamente.
+Sí, cualquier usuario con sesión activa puede subir un documento nuevo. El documento aparecerá asociado al coordinador de ese usuario.
 
-\textbf{¿Qué formatos de archivo se aceptan?}
+\textbf{¿Qué formatos de archivo acepta el sistema?}
 
-El backend acepta PDF, DOC, DOCX, JPG, JPEG, PNG y XLSX.
+PDF, Word (.doc y .docx), imágenes (.jpg y .png) y Excel (.xlsx).
 
-\textbf{¿Quién puede aprobar desde Ventanilla?}
+\textbf{¿Quién puede aprobar un documento en Ventanilla?}
 
-El operador y el administrador pueden aprobar documentos en etapa Ventanilla.
+Los usuarios con rol \textbf{Operador} y los \textbf{Administradores}.
 
-\textbf{¿Quién puede firmar documentos?}
+\textbf{¿Quién puede firmar un documento?}
 
-Solo el coordinador asignado al documento puede firmar cuando el documento está en etapa Operador / Verificación.
+Solo el \textbf{Coordinador} asignado al documento, y únicamente cuando el documento está en etapa \textbf{O — Operador / Verificación}.
+
+\textbf{¿Qué pasa si firmo el documento equivocado por error?}
+
+La firma queda registrada de manera permanente. Contacte inmediatamente al administrador del sistema para que evalúe la situación.
 
 \textbf{¿Qué es el folio de firma?}
 
-Es un identificador generado después de la firma digital. Permite consultar quién firmó, la fecha y la acción realizada.
+Es un código único generado automáticamente cuando el coordinador firma un documento. Identifica de forma inequívoca: quién firmó, qué documento, y en qué fecha y hora.
 
-\textbf{¿Por qué no aparece un botón de acción?}
+\textbf{¿Qué pasa si mi vigencia vence?}
 
-El botón depende del rol del usuario y de la etapa del documento. Si no aparece, probablemente el usuario no tiene permiso para esa acción o el documento está en una etapa distinta.
+No podrá iniciar sesión hasta que el administrador actualice su fecha de vigencia. El sistema mostrará el mensaje ``acceso denegado — vigencia expirada''.
 
+\textbf{¿Mis datos y los de los migrantes están protegidos?}
+
+Sí. Las contraseñas se guardan cifradas (el sistema nunca las guarda en texto legible), las llaves privadas de los coordinadores están protegidas con contraseña, y cada acción queda registrada en el historial del sistema.
+
+\textbf{¿Puedo acceder al sistema desde casa?}
+
+Depende de la configuración del servidor. Si el servidor está instalado localmente en las instalaciones de Casa Monarca, solo podrá acceder desde la red interna. Consulte con el área técnica si necesita acceso remoto.
+
+%%============================================================
 \chapter{Referencias}
+%%============================================================
 
-Las referencias de operación se basan en la interfaz del sistema Casa Monarca y en las instrucciones de formato del documento \textit{ManualUsuarioMA2006B2026.pdf}. Las capturas incluidas fueron generadas en un ambiente local de demostración usando el frontend existente y datos demo para representar el flujo completo.
+\begin{itemize}
+  \item Instrucciones del Manual de Usuario MA2006B 2026, Tecnológico de Monterrey.
+  \item Capturas de pantalla generadas en ambiente local de demostración con datos de prueba.
+  \item Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P. — \url{https://casamonarca.org.mx/}
+\end{itemize}
+
+\vspace{1.5cm}
+\begin{center}
+\textbf{¿Necesita ayuda?}\\[0.4em]
+Si tiene alguna duda que no se resuelve en este manual, contacte al equipo técnico:
+
+\vspace{0.4em}
+Valeria García Hernández — \texttt{A01742811@tec.mx}\\
+Alberto Rodríguez Reyes — \texttt{A01383805@tec.mx}
+
+\vspace{0.4em}
+\textit{Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P.}\\
+Monterrey, Nuevo León, México.
+\end{center}
 
 \end{document}

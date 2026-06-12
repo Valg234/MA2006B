@@ -44,30 +44,36 @@
 \contentsline {section}{\numberline {9.1}Flujo documental VOCA}{18}{section.9.1}%
 \contentsline {section}{\numberline {9.2}Reglas de negocio importantes}{18}{section.9.2}%
 \contentsline {section}{\numberline {9.3}Proceso de firma digital RSA}{19}{section.9.3}%
-\contentsline {chapter}{\numberline {10}Manejo de Errores}{20}{chapter.10}%
-\contentsline {section}{\numberline {10.1}Estrategia de errores}{20}{section.10.1}%
-\contentsline {section}{\numberline {10.2}Mensajes de error comunes}{20}{section.10.2}%
-\contentsline {section}{\numberline {10.3}Registro (logs)}{21}{section.10.3}%
-\contentsline {chapter}{\numberline {11}Pruebas}{22}{chapter.11}%
-\contentsline {section}{\numberline {11.1}Tipos de pruebas}{22}{section.11.1}%
-\contentsline {section}{\numberline {11.2}Casos de prueba manuales realizados}{22}{section.11.2}%
-\contentsline {section}{\numberline {11.3}Cómo ejecutar ESLint}{22}{section.11.3}%
-\contentsline {chapter}{\numberline {12}Despliegue}{24}{chapter.12}%
-\contentsline {section}{\numberline {12.1}Entornos}{24}{section.12.1}%
-\contentsline {section}{\numberline {12.2}Pasos para despliegue en producción}{24}{section.12.2}%
-\contentsline {section}{\numberline {12.3}Consideraciones y limitaciones conocidas (HostGator)}{24}{section.12.3}%
-\contentsline {chapter}{\numberline {13}Seguridad}{26}{chapter.13}%
-\contentsline {section}{\numberline {13.1}Autenticación}{26}{section.13.1}%
-\contentsline {section}{\numberline {13.2}Firma digital}{26}{section.13.2}%
-\contentsline {section}{\numberline {13.3}Protección de datos sensibles}{26}{section.13.3}%
-\contentsline {section}{\numberline {13.4}Buenas prácticas implementadas}{27}{section.13.4}%
-\contentsline {chapter}{\numberline {14}Guía de Contribución}{28}{chapter.14}%
-\contentsline {section}{\numberline {14.1}Convenciones de código}{28}{section.14.1}%
-\contentsline {subsection}{\numberline {14.1.1}Frontend (JavaScript/React)}{28}{subsection.14.1.1}%
-\contentsline {subsection}{\numberline {14.1.2}Backend (PHP)}{28}{subsection.14.1.2}%
-\contentsline {section}{\numberline {14.2}Flujo de trabajo con Git}{28}{section.14.2}%
-\contentsline {section}{\numberline {14.3}Cómo agregar funcionalidades}{29}{section.14.3}%
-\contentsline {chapter}{\numberline {15}Problemas Conocidos}{30}{chapter.15}%
-\contentsline {section}{\numberline {15.1}Limitaciones de la versión 1.0}{30}{section.15.1}%
-\contentsline {chapter}{\numberline {16}FAQ Técnica}{31}{chapter.16}%
-\contentsline {chapter}{\numberline {17}Referencias}{32}{chapter.17}%
+\contentsline {chapter}{\numberline {10}Ejemplos de Uso}{20}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Autenticar un usuario (login)}{20}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Subir y avanzar un documento}{21}{section.10.2}%
+\contentsline {section}{\numberline {10.3}Firmar un documento digitalmente}{21}{section.10.3}%
+\contentsline {section}{\numberline {10.4}Generar llaves RSA para un coordinador}{22}{section.10.4}%
+\contentsline {section}{\numberline {10.5}Verificar la integridad de un documento firmado}{23}{section.10.5}%
+\contentsline {chapter}{\numberline {11}Manejo de Errores}{24}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Estrategia de errores}{24}{section.11.1}%
+\contentsline {section}{\numberline {11.2}Mensajes de error comunes}{24}{section.11.2}%
+\contentsline {section}{\numberline {11.3}Registro (logs)}{25}{section.11.3}%
+\contentsline {chapter}{\numberline {12}Pruebas}{26}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Tipos de pruebas}{26}{section.12.1}%
+\contentsline {section}{\numberline {12.2}Casos de prueba manuales realizados}{26}{section.12.2}%
+\contentsline {section}{\numberline {12.3}Cómo ejecutar ESLint}{26}{section.12.3}%
+\contentsline {chapter}{\numberline {13}Despliegue}{28}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Entornos}{28}{section.13.1}%
+\contentsline {section}{\numberline {13.2}Pasos para despliegue en producción}{28}{section.13.2}%
+\contentsline {section}{\numberline {13.3}Consideraciones y limitaciones conocidas (HostGator)}{28}{section.13.3}%
+\contentsline {chapter}{\numberline {14}Seguridad}{30}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Autenticación}{30}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Firma digital}{30}{section.14.2}%
+\contentsline {section}{\numberline {14.3}Protección de datos sensibles}{30}{section.14.3}%
+\contentsline {section}{\numberline {14.4}Buenas prácticas implementadas}{31}{section.14.4}%
+\contentsline {chapter}{\numberline {15}Guía de Contribución}{32}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Convenciones de código}{32}{section.15.1}%
+\contentsline {subsection}{\numberline {15.1.1}Frontend (JavaScript/React)}{32}{subsection.15.1.1}%
+\contentsline {subsection}{\numberline {15.1.2}Backend (PHP)}{32}{subsection.15.1.2}%
+\contentsline {section}{\numberline {15.2}Flujo de trabajo con Git}{32}{section.15.2}%
+\contentsline {section}{\numberline {15.3}Cómo agregar funcionalidades}{33}{section.15.3}%
+\contentsline {chapter}{\numberline {16}Problemas Conocidos}{34}{chapter.16}%
+\contentsline {section}{\numberline {16.1}Limitaciones de la versión 1.0}{34}{section.16.1}%
+\contentsline {chapter}{\numberline {17}FAQ Técnica}{35}{chapter.17}%
+\contentsline {chapter}{\numberline {18}Referencias}{36}{chapter.18}%

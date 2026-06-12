@@ -64,6 +64,22 @@
   showstringspaces=false
 }
 
+\lstdefinestyle{jsstyle}{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codepurple}\bfseries,
+  commentstyle=\color{codegreen},
+  stringstyle=\color{orange},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=5pt,
+  tabsize=2,
+  showstringspaces=false
+}
+
 \lstdefinestyle{sqlstyle}{
   backgroundcolor=\color{codegray},
   basicstyle=\ttfamily\small,
@@ -111,7 +127,7 @@
   {\large Versión v1.0\par}
 
   \vspace{1.0cm}
-  {\bfseries Socio Formador:} Casa Monarca\par
+  {\bfseries Socio Formador:} Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P.\par
   \vspace{0.5cm}
   {\bfseries Profesores:} Raúl Gómez, Anas Wajid y Alberto F. Martínez\par
 
@@ -128,7 +144,7 @@
   Valeria García Hernández (A01742811)\par
 
   \vfill
-  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 30 de abril de 2026\par
+  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 12 de junio de 2026\par
 \end{titlepage}
 
 %% ============================================================
@@ -858,7 +874,181 @@ En cualquier etapa, un documento puede ser \textbf{rechazado}, lo que cambia su 
 \end{enumerate}
 
 %% ============================================================
-%% CAPÍTULO 10 — MANEJO DE ERRORES
+%% CAPÍTULO 10 — EJEMPLOS DE USO
+%% ============================================================
+\chapter{Ejemplos de Uso}
+
+Este capítulo presenta casos de uso representativos del sistema, con ejemplos concretos de llamadas al backend, respuestas esperadas y fragmentos de código del frontend. El objetivo es que un desarrollador que tome el proyecto por primera vez pueda comprender rápidamente cómo interactúan las capas del sistema.
+
+\section{Autenticar un usuario (login)}
+
+\textbf{Caso típico:} el usuario ingresa su correo y contraseña en la pantalla de login; el frontend envía las credenciales al backend y recibe los datos de sesión.
+
+\textbf{Llamada desde el frontend (JavaScript):}
+
+\begin{lstlisting}[style=jsstyle, caption={Llamada a login.php desde Login.jsx (elaboración propia).}]
+const response = await fetch("/api/login.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password })
+});
+const data = await response.json();
+
+if (data.success) {
+  localStorage.setItem("usuario", JSON.stringify(data.usuario));
+  navigate("/dashboard");
+} else {
+  setError(data.mensaje);
+}
+\end{lstlisting}
+
+\textbf{Respuesta exitosa del servidor:}
+
+\begin{lstlisting}[style=bashstyle, caption={Respuesta JSON de login.php para credenciales válidas (elaboración propia).}]
+{
+  "success": true,
+  "mensaje": "Login correcto",
+  "usuario": {
+    "id": 1,
+    "nombre": "Administrador",
+    "email": "admin@demo.com",
+    "rol": "admin",
+    "estado": "activo",
+    "fecha_vigencia": "2027-12-31",
+    "certificado_codigo": "A3F9D2C18E4B"
+  }
+}
+\end{lstlisting}
+
+\textbf{Respuesta cuando la contraseña es incorrecta:}
+
+\begin{lstlisting}[style=bashstyle, caption={Respuesta JSON de login.php para credenciales inválidas (elaboración propia).}]
+{ "success": false, "mensaje": "Contrasena incorrecta." }
+\end{lstlisting}
+
+\section{Subir y avanzar un documento}
+
+\textbf{Caso típico:} el usuario de consulta sube un archivo y el operador lo aprueba desde Ventanilla.
+
+\textbf{Paso 1 — Subir el documento} (POST a \texttt{crear\_documento.php} con \texttt{FormData}):
+
+\begin{lstlisting}[style=jsstyle, caption={Subida de documento con FormData desde GestorDocumentos.jsx (elaboración propia).}]
+const formData = new FormData();
+formData.append("titulo", titulo);
+formData.append("descripcion", descripcion);
+formData.append("archivo", archivoSeleccionado);
+formData.append("usuario_id", usuario.id);
+
+const res = await fetch("/api/crear_documento.php", {
+  method: "POST",
+  body: formData          // sin Content-Type: el navegador lo fija solo
+});
+const data = await res.json();
+// data.success === true  ->  documento en etapa "V"
+\end{lstlisting}
+
+\textbf{Paso 2 — Aprobar desde Ventanilla} (POST a \texttt{avanzar\_documento.php}):
+
+\begin{lstlisting}[style=jsstyle, caption={Aprobación de documento V→O desde GestorDocumentos.jsx (elaboración propia).}]
+const res = await fetch("/api/avanzar_documento.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    documento_id: doc.id,
+    usuario_id: usuario.id,
+    comentario: "Revisado y aprobado"
+  })
+});
+const data = await res.json();
+// data.etapa === "O"  ->  documento avanzó a Operador/Verificación
+\end{lstlisting}
+
+\section{Firmar un documento digitalmente}
+
+\textbf{Caso típico:} el coordinador selecciona un documento en etapa O e ingresa su contraseña de firma para generar la firma RSA.
+
+\textbf{Precondición:} el coordinador debe tener llaves RSA generadas (\texttt{clave\_publica} y \texttt{clave\_privada\_cifrada} no nulos en la tabla \texttt{usuarios}).
+
+\begin{lstlisting}[style=jsstyle, caption={Firma digital de documento desde GestorDocumentos.jsx (elaboración propia).}]
+const res = await fetch("/api/firmar_documento.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    documento_id: doc.id,
+    usuario_id: usuario.id,
+    password_firma: passwordFirma,
+    coordinadores_adicionales: []   // sin firmas adicionales
+  })
+});
+const data = await res.json();
+
+if (data.success) {
+  // data.folio_firma  ->  "FIR-20260612-143022-DOC5-USR2"
+  // data.etapa        ->  "C"
+  mostrarTicket(data.folio_firma);
+}
+\end{lstlisting}
+
+\textbf{Respuesta exitosa:}
+
+\begin{lstlisting}[style=bashstyle, caption={Respuesta de firmar\_documento.php tras firma RSA exitosa (elaboración propia).}]
+{
+  "success": true,
+  "mensaje": "Documento firmado correctamente",
+  "etapa": "C",
+  "folio_firma": "FIR-20260612-143022-DOC5-USR2",
+  "coordinadores_adicionales": []
+}
+\end{lstlisting}
+
+\section{Generar llaves RSA para un coordinador}
+
+\textbf{Caso típico:} el administrador genera por primera vez el par de llaves RSA de un coordinador desde el Panel de Administración.
+
+\begin{lstlisting}[style=jsstyle, caption={Generación de llaves RSA-2048 para un coordinador (elaboración propia).}]
+const res = await fetch("/api/generar_llaves_coordinador.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    solicitante_id: usuarioActual.id,   // admin o el propio coordinador
+    coordinador_id: coordinadorSeleccionado.id,
+    password_firma: nuevaPasswordFirma  // mínimo 6 caracteres
+  })
+});
+const data = await res.json();
+// data.success === true  ->  llaves almacenadas en usuarios.clave_publica
+//                            y usuarios.clave_privada_cifrada
+\end{lstlisting}
+
+\begin{itemize}
+  \item Si \texttt{solicitante\_id} es un \textbf{admin}, puede generar llaves para cualquier coordinador.
+  \item Si \texttt{solicitante\_id} es un \textbf{coordinador}, solo puede generar sus propias llaves (\texttt{solicitante\_id === coordinador\_id}).
+  \item Si el coordinador ya tenía llaves, estas son \textbf{reemplazadas}. Los documentos firmados con las llaves anteriores siguen siendo verificables porque la firma y la clave pública anterior permanecen en la tabla \texttt{documentos\_firmas}.
+\end{itemize}
+
+\section{Verificar la integridad de un documento firmado}
+
+\textbf{Caso típico:} cualquier usuario quiere confirmar que un documento no fue alterado después de ser firmado.
+
+\begin{lstlisting}[style=jsstyle, caption={Verificación de firma RSA/SHA-256 desde el frontend (elaboración propia).}]
+const res = await fetch("/api/verificar_firma_documento.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ documento_id: doc.id })
+});
+const data = await res.json();
+
+if (data.valida) {
+  mostrarMensaje("Firma válida. El documento no fue modificado.");
+} else {
+  mostrarAlerta("Firma inválida o documento alterado.");
+}
+\end{lstlisting}
+
+El backend recalcula el hash SHA-256 del archivo físico actual y lo compara contra la firma RSA almacenada usando la clave pública del coordinador firmante. Si el archivo fue modificado en cualquier byte posterior a la firma, la verificación falla.
+
+%% ============================================================
+%% CAPÍTULO 11 — MANEJO DE ERRORES
 %% ============================================================
 \chapter{Manejo de Errores}
 

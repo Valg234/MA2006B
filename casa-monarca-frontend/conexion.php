@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
-$usuario = "CAMBIAR_USUARIO";
-$password = "CAMBIAR_CONTRASENA";
+$usuario = "casa_monarca_user";
+$password = "casa_monarca_pass";
 $base_datos = "casa_monarca";
 
 // SEGURIDAD: reemplaza estas credenciales por las de tu entorno antes de ejecutar

@@ -1,0 +1,29 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Abstract}{1}{chapter*.4}%
+\contentsline {chapter}{\numberline {1}Introducción}{2}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Marco de Referencia}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Criptografía de Clave Pública y Estándares Internacionales}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Bibliotecas y Soluciones de Referencia: Pycryptodome}{4}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Casos de Estudio Reales: El Sistema de Identidades del SAT}{4}{section.2.3}%
+\contentsline {chapter}{\numberline {3}Desarrollo}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Propuesta de Solución}{5}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Justificación de decisiones tecnológicas e infraestructura}{5}{subsection.3.1.1}%
+\contentsline {section}{\numberline {3.2}Desarrollo de Componentes: Backend}{7}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Autenticación y control de acceso}{7}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Firma digital RSA con OpenSSL}{8}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Desarrollo de Componentes: Frontend}{9}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Arquitectura de componentes y enrutamiento}{9}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Módulo Gestor de Documentos}{9}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Flujo de firma digital en el frontend}{11}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Conexión de los Componentes}{13}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Resultados}{15}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Resultados del Backend}{15}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Resultados del Frontend}{15}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Resultados de la Solución Completa}{17}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Casos de Uso y Tabla de Validaciones}{18}{section.4.4}%
+\contentsline {chapter}{\numberline {5}Conclusiones y Trabajo Futuro}{20}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Conclusiones}{20}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Trabajo Futuro}{20}{section.5.2}%
+\contentsline {chapter}{Referencias}{22}{chapter*.16}%
+\contentsline {chapter}{\numberline {A}Diccionario de Datos — Tabla \texttt {usuarios}}{23}{appendix.Alph1}%
+\contentsline {chapter}{\numberline {B}Fragmento de Código — Verificación Criptográfica de Firma}{24}{appendix.Alph2}%
