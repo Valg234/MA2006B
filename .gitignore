@@ -1,4 +1,4 @@
-# OS Files
+# ─── Sistema operativo ────────────────────────────────────────
 .DS_Store
 __MACOSX/
 ._*
@@ -6,22 +6,22 @@ Thumbs.db
 .AppleDouble
 .LSOverride
 
-# Dependencies
+# ─── Dependencias ─────────────────────────────────────────────
 node_modules/
 venv/
 vendor/
 
-# Environment
+# ─── Variables de entorno ─────────────────────────────────────
 .env
 .env.local
 .env.*.local
 
-# Build & Generated Files
+# ─── Build / compilados ───────────────────────────────────────
 dist/
 build/
 *.tsbuildinfo
 
-# IDE
+# ─── IDEs y editores ──────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
@@ -30,39 +30,43 @@ build/
 .project
 .classpath
 
-# Logs
+# ─── Logs ─────────────────────────────────────────────────────
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Cache
+# ─── Caché ────────────────────────────────────────────────────
 .cache/
 .eslintcache
 .vite/
 
-# Uploads & User Files (generados en tiempo de ejecución)
+# ─── Archivos subidos por usuarios (runtime) ──────────────────
 casa-monarca-frontend/uploads/*
 !casa-monarca-frontend/uploads/documentos/
 casa-monarca-frontend/uploads/documentos/*
 !casa-monarca-frontend/uploads/documentos/.gitkeep
 
-# Instrucciones (documentos internos, no subir a GitHub)
-instrucciones */
+# ─── Documentos de trabajo internos (no son entregables) ─────
+instrucciones /
+Cronograma_Gantt_Bitacoras.docx
 
-# LaTeX/Documentation
-manual_usuario/*.aux
-manual_usuario/*.fdb_latexmk
-manual_usuario/*.fls
-manual_usuario/*.lof
-manual_usuario/*.lot
-manual_usuario/*.toc
-manual_usuario/*.out
-manual_usuario/*.log
-manual_usuario/*.synctex.gz
+# ─── Auxiliares de LaTeX (todas las carpetas de documentos) ───
+*.aux
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.toc
+*.out
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+*.bcf
+*.run.xml
 
-# Duplicates & Temp
+# ─── Copias y temporales ──────────────────────────────────────
 *\ -\ Copy/
 *\ -\ copy/
-api\ 3/
 *\ 3/

@@ -1,4 +1,4 @@
-# Gestor de Identidades — Casa Monarca
+# Gestor de Identidades y Documentos — Casa Monarca
 
 Sistema web para la gestión de identidades digitales, firma de documentos institucionales y registro de expedientes de migrantes, desarrollado para [Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P.](https://casamonarca.org.mx/) como parte del reto MA2006B del Tecnológico de Monterrey.
 

@@ -36,7 +36,7 @@
   colorlinks=true,
   linkcolor=black,
   urlcolor=blue,
-  pdftitle={Manual de Usuario - Gestor de Identidades MA2006B 2026},
+  pdftitle={Manual de Usuario - Gestor de Identidades y Documentos MA2006B 2026},
   pdfauthor={Equipo 5}
 }
 
@@ -76,9 +76,9 @@
 
 %% Comando para screenshot disponible
 \newcommand{\screenshot}[3]{%
-  \begin{figure}[H]
+  \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.90\textwidth]{#1}
+    \includegraphics[width=0.78\textwidth]{#1}
     \caption{#2}
     \label{#3}
   \end{figure}%
@@ -121,7 +121,7 @@
   \vspace{1.0cm}
   {\Large\bfseries Manual de Usuario\par}
   \vspace{0.2cm}
-  {\large Gestor de Identidades\par}
+  {\large Gestor de Identidades y Documentos\par}
   {\large Versión v1.0\par}
 
   \vspace{1.0cm}
@@ -142,7 +142,7 @@
   Valeria García Hernández (A01742811)\par
 
   \vfill
-  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 12 de junio de 2026\par
+  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 14 de junio de 2026\par
 \end{titlepage}
 
 %%------------------------------------------------------------
@@ -159,7 +159,7 @@
 \chapter{Introducción}
 %%============================================================
 
-Bienvenido al \textbf{Gestor de Identidades de Casa Monarca}. Esta aplicación fue desarrollada para ayudar al equipo de Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P.\ a administrar de manera segura y ordenada la información del personal, los expedientes de migrantes y los documentos institucionales.
+Bienvenido al \textbf{Gestor de Identidades y Documentos de Casa Monarca}. Esta aplicación fue desarrollada para ayudar al equipo de Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P.\ a administrar de manera segura y ordenada la información del personal, los expedientes de migrantes y los documentos institucionales.
 
 Con este sistema usted puede:
 
@@ -188,7 +188,7 @@ Si en algún momento el sistema muestra un mensaje de error o no responde como e
 
 \section{¿Qué necesita para usar el sistema?}
 
-El Gestor de Identidades es una aplicación que se usa desde el navegador de internet, igual que consultar una página web. Para utilizarlo usted solo necesita:
+El Gestor de Identidades y Documentos es una aplicación que se usa desde el navegador de internet, igual que consultar una página web. Para utilizarlo usted solo necesita:
 
 \begin{itemize}
   \item Una computadora o laptop (Windows, macOS o Linux).
@@ -234,7 +234,7 @@ Este capítulo es para el \textbf{personal técnico} que configura el sistema po
 
 \section{Resumen del proceso de instalación}
 
-La instalación del Gestor de Identidades consta de cuatro pasos principales:
+La instalación del Gestor de Identidades y Documentos consta de cuatro pasos principales:
 
 \begin{enumerate}[label=\arabic*.]
   \item Instalar y configurar el servidor web (XAMPP o equivalente).
@@ -324,7 +324,7 @@ Al importar la base de datos, se crea automáticamente un usuario administrador 
 
 \section{Abrir el sistema}
 
-Para entrar al Gestor de Identidades, abra su navegador de internet y escriba en la barra de dirección la URL que le proporcionó el administrador del sistema. Si está en un entorno de pruebas local, la dirección usual es:
+Para entrar al Gestor de Identidades y Documentos, abra su navegador de internet y escriba en la barra de dirección la URL que le proporcionó el administrador del sistema. Si está en un entorno de pruebas local, la dirección usual es:
 
 \begin{center}
 \texttt{http://localhost:5173}
@@ -332,7 +332,7 @@ Para entrar al Gestor de Identidades, abra su navegador de internet y escriba en
 
 Verá la pantalla de inicio de sesión como se muestra en la Figura~\ref{fig:01-login}.
 
-\screenshot{capturas/01-login.png}{Pantalla de inicio de sesión del Gestor de Identidades.}{fig:01-login}
+\screenshot{capturas/01-login.png}{Pantalla de inicio de sesión del Gestor de Identidades y Documentos.}{fig:01-login}
 
 \section{Iniciar sesión}
 
@@ -345,6 +345,8 @@ Verá la pantalla de inicio de sesión como se muestra en la Figura~\ref{fig:01-
 Si sus datos son correctos, el sistema lo llevará directamente al \textbf{Dashboard} (pantalla principal), donde verá su nombre, rol y las opciones disponibles para usted.
 
 \screenshot{capturas/02-dashboard-admin.png}{Dashboard principal del sistema con sesión de administrador iniciada.}{fig:02-dashboard}
+
+El Dashboard muestra en la parte superior el nombre del usuario y su rol, y presenta el menú de navegación con los módulos disponibles. En la imagen se observa la vista del perfil de administrador, que tiene acceso a todas las secciones del sistema.
 
 \begin{importantebox}
 Si el sistema muestra un mensaje de error, revise:
@@ -417,6 +419,8 @@ Para acceder, haga clic en \textbf{Administración} en el menú principal del Da
 
 \screenshot{capturas/13-admin-panel-usuarios.png}{Panel de Administración con la lista de usuarios registrados en el sistema.}{fig:13-admin-panel}
 
+La figura anterior muestra la tabla con todos los usuarios del sistema. Cada columna corresponde a un campo clave de la cuenta: nombre, correo, rol asignado, estado actual (activo, inactivo o revocado), fecha de vigencia y el código de certificado único generado automáticamente al crear el usuario. En la columna de acciones se encuentran los botones para editar o eliminar cada registro.
+
 \subsection{Entender la lista de usuarios}
 
 Al abrir el Panel de Administración, verá una tabla con todos los usuarios registrados. Cada fila muestra:
@@ -449,6 +453,8 @@ Al abrir el Panel de Administración, verá una tabla con todos los usuarios reg
 
 \screenshot{capturas/14-admin-crear-usuario.png}{Formulario para registrar un nuevo usuario en el sistema.}{fig:14-crear-usuario}
 
+El formulario muestra todos los campos necesarios para dar de alta una nueva cuenta. Es importante asignar el rol correcto desde el principio, ya que determina qué puede hacer el usuario en el sistema. Si el nuevo perfil es operador o consulta, también es obligatorio seleccionar el coordinador al que quedará vinculado.
+
 \begin{consejobox}
 El sistema genera automáticamente un \textbf{código de certificado único} para cada usuario nuevo. Este código es la identidad digital del colaborador dentro del sistema. No necesita anotarlo; el sistema lo guarda solo.
 \end{consejobox}
@@ -469,6 +475,8 @@ Use esta opción para actualizar datos, cambiar el estado de una cuenta o extend
 \end{enumerate}
 
 \screenshot{capturas/15-admin-editar-usuario.png}{Formulario de edición de un usuario existente.}{fig:15-editar-usuario}
+
+El formulario de edición es idéntico al de creación, pero con los datos actuales del usuario ya cargados. Solo es necesario modificar los campos que cambiarán; los demás pueden dejarse sin tocar. Al presionar \textbf{Guardar cambios}, únicamente se actualizan los datos modificados.
 
 \textbf{Casos frecuentes de edición:}
 
@@ -557,6 +565,9 @@ Cada documento recorre cuatro etapas. Piense en ellas como pasos de revisión y 
 \textbf{Resultado:} el sistema confirma que el documento fue creado y lo agrega a la tabla en etapa \textbf{V — Ventanilla}.
 
 \screenshot{capturas/04-formulario-nuevo-documento.png}{Formulario para registrar y subir un documento nuevo.}{fig:nuevo-documento}
+
+La figura anterior muestra el formulario con los tres campos requeridos: título, descripción y archivo. Una vez enviado correctamente, el sistema agrega el documento a la tabla y le asigna automáticamente la etapa inicial V — Ventanilla, como se muestra a continuación.
+
 \screenshot{capturas/05-documento-etapa-ventanilla.png}{El documento recién creado aparece en la tabla en etapa Ventanilla.}{fig:documento-ventanilla}
 
 \begin{importantebox}
@@ -578,6 +589,9 @@ Este paso significa que el documento fue revisado y está listo para pasar a la 
 \textbf{Resultado:} el documento avanza a etapa \textbf{O — Operador / Verificación} y queda listo para que el coordinador lo firme.
 
 \screenshot{capturas/06-aprobacion-operador.png}{Botón de aprobación visible para el operador en la etapa Ventanilla.}{fig:aprobar-operador}
+
+En la imagen se aprecia el botón \textbf{Aprobar} que aparece en la columna de acciones cuando el usuario tiene el rol necesario y el documento está en Ventanilla. Al presionarlo, la etapa cambia de forma inmediata, como confirma la imagen siguiente.
+
 \screenshot{capturas/07-documento-etapa-operador.png}{El documento avanzó a la etapa Operador / Verificación.}{fig:documento-operador}
 
 \subsection{Firmar un documento digitalmente}
@@ -601,6 +615,9 @@ Para poder firmar, usted debe tener configuradas sus \textbf{llaves de firma dig
 \textbf{Resultado:} el sistema genera un \textbf{folio único de firma} y un ticket que registra: quién firmó, en qué fecha y a qué hora. El documento avanza a etapa \textbf{C — Coordinador / Firma}.
 
 \screenshot{capturas/08-firma-coordinador.png}{Botón de firma digital disponible para el coordinador.}{fig:firma-coordinador}
+
+La primera imagen muestra el botón \textbf{Firmar documento} visible en la columna de acciones cuando el documento está en etapa O y el coordinador tiene llaves configuradas. Al confirmar la contraseña, el sistema procesa la firma criptográfica y genera de inmediato el ticket que se muestra a continuación.
+
 \screenshot{capturas/09-ticket-firma.png}{Ticket con el folio generado después de la firma digital.}{fig:ticket-firma}
 
 \begin{alertabox}
@@ -621,6 +638,8 @@ El sistema puede confirmar que un documento firmado no ha sido modificado desde 
 
 \screenshot{capturas/10-verificacion-firma.png}{El sistema confirma que la firma es válida y el documento no fue modificado.}{fig:verificacion-firma}
 
+La pantalla de verificación muestra un mensaje que indica claramente si la firma es válida o si el archivo fue alterado tras ser firmado. Cuando la firma es correcta, el sistema también despliega el nombre del coordinador firmante y la fecha exacta en que se realizó la firma, lo que permite identificar sin ambigüedad quién autorizó el documento.
+
 \subsection{Realizar la inserción final}
 
 \textbf{Disponible para:} \fbox{Admin}
@@ -636,7 +655,12 @@ Este es el último paso del flujo. El administrador confirma que todo el proceso
 \textbf{Resultado:} el documento queda en etapa \textbf{A — Inserción Final} con la etiqueta \textbf{Finalizado}. El flujo está completo.
 
 \screenshot{capturas/11-insercion-final-admin.png}{Botón de inserción final disponible para el administrador.}{fig:insercion-final}
+
+La imagen muestra el botón \textbf{Inserción final} que aparece en la columna de acciones del documento cuando está en etapa C y el usuario es administrador. Al confirmarlo, el documento pasa al estado definitivo, como se aprecia a continuación.
+
 \screenshot{capturas/12-documento-finalizado.png}{Documento archivado en etapa de Inserción Final.}{fig:documento-finalizado}
+
+Un documento en esta etapa no puede ser revertido ni modificado. La etiqueta \textbf{Finalizado} es la confirmación de que el flujo VOCA fue completado con todas las aprobaciones registradas en el historial del sistema.
 
 %%============================================================
 \section{Módulo: Migrantes}
@@ -648,9 +672,11 @@ Este es el último paso del flujo. El administrador confirma que todo el proceso
 \vspace{0.4em}
 El módulo de Migrantes permite registrar y consultar los expedientes de las personas atendidas por Casa Monarca.
 
-Para acceder, haga clic en \textbf{Migrantes} en el menú del Dashboard.
+Para acceder, haga clic en \textbf{Migrantes} en el menú del Dashboard. La Figura~\ref{fig:17-migrantes} muestra la vista principal del módulo con el listado completo de expedientes.
 
 \screenshot{capturas/17-modulo-migrantes.png}{Vista principal del módulo de Migrantes con la lista de expedientes registrados.}{fig:17-migrantes}
+
+La tabla muestra los datos principales de cada persona atendida: nombre, nacionalidad, motivo de atención y la fecha de registro. La barra de búsqueda permite localizar rápidamente un expediente por nombre sin necesidad de recorrer toda la lista.
 
 \subsection{Consultar la lista de migrantes}
 
@@ -670,6 +696,8 @@ Al abrir el módulo, verá una tabla con todos los migrantes registrados. Puede 
 
 \screenshot{capturas/18-crear-migrante.png}{Formulario para registrar un nuevo expediente de migrante.}{fig:18-crear-migrante}
 
+El formulario de registro captura los datos personales, de origen y del motivo de atención de cada persona. Todos los campos son opcionales excepto el nombre, lo que permite registrar el expediente incluso cuando la información está incompleta y completarla posteriormente.
+
 \begin{importantebox}
 Los datos de los migrantes son \textbf{información confidencial}. Solo comparta o discuta esta información con personas autorizadas dentro de Casa Monarca. El sistema registra quién creó o modificó cada expediente.
 \end{importantebox}
@@ -687,6 +715,8 @@ El módulo de Solicitudes Push permite al equipo comunicar avisos o peticiones i
 Para acceder, haga clic en \textbf{Solicitudes} en el menú del Dashboard.
 
 \screenshot{capturas/19-solicitudes-push.png}{Vista del módulo de Solicitudes Push con las solicitudes registradas.}{fig:19-solicitudes}
+
+La pantalla muestra el listado de solicitudes con su estado actual: pendientes, aprobadas o rechazadas. Las solicitudes que aún esperan respuesta aparecen en la parte superior para facilitar la atención del coordinador responsable.
 
 \begin{enumerate}[label=\arabic*.]
   \item Abra el módulo de Solicitudes Push desde el menú.
