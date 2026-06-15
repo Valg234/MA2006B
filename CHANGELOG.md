@@ -5,7 +5,7 @@ El formato sigue el estándar [Keep a Changelog](https://keepachangelog.com/es/1
 
 ---
 
-## [1.0.0] — 2026-06-14
+## [1.0.0] — 2026-06-15
 
 Versión de entrega final del reto MA2006B. Sistema funcional y validado.
 

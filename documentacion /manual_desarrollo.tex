@@ -94,6 +94,17 @@
   language=SQL
 }
 
+% Soporte de caracteres UTF-8 (acentos, ñ) dentro de bloques de código
+\lstset{
+  extendedchars=true,
+  literate=
+    {á}{{\'{a}}}1 {é}{{\'{e}}}1 {í}{{\'{i}}}1 {ó}{{\'{o}}}1 {ú}{{\'{u}}}1
+    {Á}{{\'{A}}}1 {É}{{\'{E}}}1 {Í}{{\'{I}}}1 {Ó}{{\'{O}}}1 {Ú}{{\'{U}}}1
+    {ñ}{{\~{n}}}1 {Ñ}{{\~{N}}}1
+    {ü}{{\"u}}1   {Ü}{{\"U}}1
+    {¿}{{?`}}1    {¡}{{!`}}1
+}
+
 \hypersetup{
   colorlinks=true,
   linkcolor=black,
@@ -144,7 +155,7 @@
   Valeria García Hernández (A01742811)\par
 
   \vfill
-  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 14 de junio de 2026\par
+  {\bfseries Lugar y fecha de elaboración:} Monterrey, Nuevo León, 15 de junio de 2026\par
 \end{titlepage}
 
 %% ============================================================
