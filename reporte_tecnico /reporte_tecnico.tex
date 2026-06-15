@@ -148,8 +148,8 @@
 %%============================================================
 %% ABSTRACT
 %%============================================================
-\chapter*{Abstract}
-\addcontentsline{toc}{chapter}{Abstract}
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
 
 Este reporte documenta el diseño, implementación y validación del sistema \textbf{Gestor de Identidades y Documentos} desarrollado para Casa Monarca, Ayuda Humanitaria al Migrante, A.B.P., como Etapa~1 del reto del bloque MA2006B. La solución es una aplicación web de arquitectura cliente-servidor desacoplada: un frontend de página única (SPA) en React~19 con Vite~8 y un backend compuesto por 22 endpoints PHP sobre Apache, conectados a una base de datos MySQL/MariaDB. El sistema cubre autenticación segura con BCRYPT, control de acceso basado en roles (RBAC) con cuatro niveles de privilegio, gestión de usuarios con certificados digitales únicos y control de vigencia temporal, un flujo documental de cuatro etapas (Ventanilla $\to$ Operador $\to$ Coordinador $\to$ Inserción final) con firma digital RSA-2048 y verificación criptográfica de integridad mediante SHA-256. La validación funcional se realizó mediante 15 casos de prueba de caja negra sobre los módulos de identidad, con resultado \textit{Pass} en todos los escenarios documentados. Los fundamentos criptográficos aplicados incluyen las recomendaciones del NIST SP 800-56B para generación de pares de llaves y los principios de entropía de Shannon para la aleatoriedad de certificados, en alineación directa con los contenidos del bloque de Álgebras Modernas para Seguridad y Criptografía.
 
